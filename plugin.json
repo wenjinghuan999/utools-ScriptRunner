@@ -1,0 +1,32 @@
+{
+	"pluginName": "脚本运行",
+	"description": "可将监视目录下的所有python脚本文件自动加入关键字列表",
+	"version": "0.0.1",
+    "preload": "preload.js",
+    "logo": "python.png",
+    "author": "https://github.com/wenjinghuan999",
+    "homepage": "https://github.com/wenjinghuan999/utools-ScriptRunner",
+    "platform": ["win32"],
+	"features": [
+		{
+		  "code": "setup-add",
+		  "explain": "脚本运行插件设置：添加监视目录",
+          "cmds":["脚本运行添加目录", "Add Folder for ScriptRunner"]
+		},
+		{
+            "code": "setup-remove",
+            "explain": "脚本运行插件设置：删除监视目录",
+            "cmds":["脚本运行删除目录", "Remove Folder for ScriptRunner"]
+        },
+		{
+            "code": "setup-clear",
+            "explain": "脚本运行插件设置：删除所有监视目录",
+            "cmds":["脚本运行删除所有目录", "Clear All Folder for ScriptRunner"]
+        },
+		{
+            "code": "setup-refresh-scripts",
+            "explain": "脚本运行插件设置：重新扫描所有监视目录",
+            "cmds":["脚本运行重新扫描", "Refresh ScriptRunner"]
+        }
+	]
+}
