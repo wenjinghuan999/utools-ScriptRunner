@@ -37,7 +37,7 @@ function searchDiskRoots(searchWord) {
             items.push({
                title: url,
                description: url + path.sep,
-               icon: window.utools.getFileIcon(url), // 图标(可选)
+               icon: window.utools.getFileIcon(url),
                url: url,
                blur: true
             });
@@ -51,19 +51,6 @@ function existDir(dirPathName) {
    try {
       var stat = fs.statSync(dirPathName);
       if (stat.isDirectory()) {
-         return true;
-      } else {
-         return false;
-      }
-   } catch (error) {
-      return false;
-   }
-}
-
-function existFile(filePathName) {
-   try {
-      var stat = fs.statSync(filePathName);
-      if (stat.isFile()) {
          return true;
       } else {
          return false;
