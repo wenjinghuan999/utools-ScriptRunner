@@ -4,7 +4,7 @@
 	"version": "0.0.1",
     "preload": "preload.js",
     "logo": "python.png",
-    "author": "https://github.com/wenjinghuan999",
+    "author": "wenjinghuan999",
     "homepage": "https://github.com/wenjinghuan999/utools-ScriptRunner",
     "platform": ["win32"],
 	"features": [
