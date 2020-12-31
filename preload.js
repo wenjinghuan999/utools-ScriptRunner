@@ -356,6 +356,90 @@ function removeAllScriptCommands() {
    }
 }
 
+function searchAllWords(file, searchWords) {
+   var resultIdx = []
+   var subarrayLengths = []
+   var startPos = 0
+   var subarrayLength = 0
+   for (var i in searchWords) {
+      const word = searchWords[i]
+      var pos = file.indexOf(word, startPos)
+      if (pos < 0) {
+         subarrayLengths.push(subarrayLength)
+         if (startPos == 0) {
+            return [];
+         }
+         startPos = 0
+         subarrayLength = 0
+         pos = file.indexOf(word)
+         if (pos < 0) {
+            return [];
+         }
+      }
+      resultIdx.push(pos)
+      subarrayLength += 1
+   }
+   return [resultIdx, subarrayLengths];
+}
+
+function searchAllScriptCommands(searchWords) {
+   const id = 'scripts'
+   var data = window.utools.db.get(id)
+   if (!data || typeof(data.data) !== "object") {
+      return;
+   }
+
+   var results = []
+   for (var url in data.data) {
+      data.data[url].forEach(file => {
+         if (results.find(x => x.url === file) >= 0) {
+            return;
+         }
+         if (!searchWords || searchWords.length == 0) {
+            results.push({
+               title: path.basename(file),
+               description: file + "（位于监视目录：" + url + "）",
+               icon: utools.getFileIcon(file),
+               url: file,
+               searchWordsIdx: [],
+               subarrayLengths: []
+            })
+         }
+         else {
+            var result = searchAllWords(file, searchWords)
+            console.log(result)
+            if (result && result.length == 2) {
+               const searchWordsIdx = result[0]
+               const subarrayLengths = result[1]
+               results.push({
+                  title: path.basename(file),
+                  description: file + "（位于监视目录：" + url + "）",
+                  icon: utools.getFileIcon(file),
+                  url: file,
+                  searchWordsIdx: searchWordsIdx,
+                  subarrayLengths: subarrayLengths
+               })
+            }
+         }
+      })
+   }
+
+   results.sort((a, b) => {
+      for (var i = 0; i < Math.min(a.subarrayLengths.length, b.subarrayLengths.length); i++) {
+         if (a.subarrayLengths[i] != b.subarrayLengths[i]) {
+            return a.subarrayLengths[i] - b.subarrayLengths[i];
+         }
+      }
+      for (var i = 0; i < a.searchWordsIdx.length; i++) {
+         if (a.searchWordsIdx[i] != b.searchWordsIdx[i]) {
+            return a.searchWordsIdx[i] - b.searchWordsIdx[i];
+         }
+      }
+      return a.title.localeCompare(b.title);
+   })
+   return results;
+}
+
 window.exports = {
    "setup-add": {
       mode: "list",
@@ -444,6 +528,27 @@ window.exports = {
             utools.outPlugin()
          },
          placeholder: "重新扫描所有监视目录"
+      }
+   },
+   "run-script": {
+      mode: "list",
+      args: {
+         enter: (action, callbackSetList) => {
+            callbackSetList(searchAllScriptCommands([]))
+         },
+         search: (action, searchWord, callbackSetList) => {
+            var searchWords = searchWord.split(' ').filter(x => !!x)
+            console.log('searchWords:')
+            console.log(searchWords)
+            callbackSetList(searchAllScriptCommands(searchWords))
+         },
+         select: (action, itemData, callbackSetList) => {
+            const file = itemData.url
+            window.utools.hideMainWindow()
+            require('electron').shell.openExternal(file)
+            window.utools.outPlugin()
+         },
+         placeholder: "运行脚本"
       }
    }
 }

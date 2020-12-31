@@ -27,6 +27,11 @@
             "code": "setup-refresh-scripts",
             "explain": "脚本运行插件设置：重新扫描所有监视目录",
             "cmds":["脚本运行重新扫描", "Refresh ScriptRunner"]
+        },
+		{
+            "code": "run-script",
+            "explain": "运行脚本，模糊匹配监视目录内的脚本文件",
+            "cmds":["运行脚本", "Run"]
         }
 	]
 }
