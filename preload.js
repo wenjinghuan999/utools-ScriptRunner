@@ -356,7 +356,7 @@ function removeAllScriptCommands() {
    }
 }
 
-function searchAllWords(file, searchWords) {
+function searchAllWordsInFilename(file, searchWords) {
    var resultIdx = []
    var subarrayLengths = []
    var startPos = 0
@@ -364,22 +364,25 @@ function searchAllWords(file, searchWords) {
    for (var i in searchWords) {
       const word = searchWords[i]
       var pos = file.indexOf(word, startPos)
+      resultIdx.push(pos)
       if (pos < 0) {
          subarrayLengths.push(subarrayLength)
-         if (startPos == 0) {
-            return [];
-         }
-         startPos = 0
-         subarrayLength = 0
-         pos = file.indexOf(word)
-         if (pos < 0) {
-            return [];
+         if (startPos > 0) {
+            startPos = 0
+            subarrayLength = -1
+            resultIdx.push(file.indexOf(word))
          }
       }
-      resultIdx.push(pos)
       subarrayLength += 1
    }
    return [resultIdx, subarrayLengths];
+}
+
+function searchAllWords(file, searchWords) {
+   const basename = path.basename(file)
+   var [idx1, subarr1] = searchAllWordsInFilename(basename, searchWords)
+   var [idx2, subarr2] = searchAllWordsInFilename(file, searchWords)
+   return [idx1, subarr1, idx2, subarr2]
 }
 
 function searchAllScriptCommands(searchWords) {
@@ -401,22 +404,24 @@ function searchAllScriptCommands(searchWords) {
                description: file + "（位于监视目录：" + url + "）",
                icon: utools.getFileIcon(file),
                url: file,
-               searchWordsIdx: [],
-               subarrayLengths: []
+               idx1: [],
+               subarr1: [],
+               idx2: [],
+               subarr2: []
             })
          }
          else {
-            var result = searchAllWords(file, searchWords)
-            if (result && result.length == 2) {
-               const searchWordsIdx = result[0]
-               const subarrayLengths = result[1]
+            var [idx1, subarr1, idx2, subarr2] = searchAllWords(file.toLocaleLowerCase(), searchWords)
+            if (!idx2.includes(-1)) {
                results.push({
                   title: path.basename(file),
                   description: file + "（位于监视目录：" + url + "）",
                   icon: utools.getFileIcon(file),
                   url: file,
-                  searchWordsIdx: searchWordsIdx,
-                  subarrayLengths: subarrayLengths
+                  idx1: idx1,
+                  subarr1: subarr1,
+                  idx2: idx2,
+                  subarr2: subarr2
                })
             }
          }
@@ -424,14 +429,27 @@ function searchAllScriptCommands(searchWords) {
    }
 
    results.sort((a, b) => {
-      for (var i = 0; i < Math.min(a.subarrayLengths.length, b.subarrayLengths.length); i++) {
-         if (a.subarrayLengths[i] != b.subarrayLengths[i]) {
-            return a.subarrayLengths[i] - b.subarrayLengths[i];
+      if (a.idx1.includes(-1) != b.idx1.includes(-1)) {
+         return a.idx1.indexOf(-1) - b.idx1.indexOf(-1);
+      }
+      for (var i = 0; i < a.subarr1.length; i++) {
+         if (a.subarr1[i] != b.subarr1[i]) {
+            return b.subarr1[i] - a.subarr1[i];
          }
       }
-      for (var i = 0; i < a.searchWordsIdx.length; i++) {
-         if (a.searchWordsIdx[i] != b.searchWordsIdx[i]) {
-            return a.searchWordsIdx[i] - b.searchWordsIdx[i];
+      for (var i = 0; i < a.idx1.length; i++) {
+         if (a.idx1[i] != b.idx1[i]) {
+            return a.idx1[i] - b.idx1[i];
+         }
+      }
+      for (var i = 0; i < a.subarr2.length; i++) {
+         if (a.subarr2[i] != b.subarr2[i]) {
+            return b.subarr2[i] - a.subarr2[i];
+         }
+      }
+      for (var i = 0; i < a.idx1.length; i++) {
+         if (a.idx1[i] != b.idx1[i]) {
+            return a.idx1[i] - b.idx1[i];
          }
       }
       return a.title.localeCompare(b.title);
@@ -536,7 +554,7 @@ window.exports = {
             callbackSetList(searchAllScriptCommands([]))
          },
          search: (action, searchWord, callbackSetList) => {
-            var searchWords = searchWord.split(' ').filter(x => !!x)
+            var searchWords = searchWord.toLocaleLowerCase().split(' ').filter(x => !!x)
             callbackSetList(searchAllScriptCommands(searchWords))
          },
          select: (action, itemData, callbackSetList) => {
