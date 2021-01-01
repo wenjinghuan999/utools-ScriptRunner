@@ -407,7 +407,6 @@ function searchAllScriptCommands(searchWords) {
          }
          else {
             var result = searchAllWords(file, searchWords)
-            console.log(result)
             if (result && result.length == 2) {
                const searchWordsIdx = result[0]
                const subarrayLengths = result[1]
@@ -538,8 +537,6 @@ window.exports = {
          },
          search: (action, searchWord, callbackSetList) => {
             var searchWords = searchWord.split(' ').filter(x => !!x)
-            console.log('searchWords:')
-            console.log(searchWords)
             callbackSetList(searchAllScriptCommands(searchWords))
          },
          select: (action, itemData, callbackSetList) => {
