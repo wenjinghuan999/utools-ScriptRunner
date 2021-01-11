@@ -19,7 +19,7 @@ function existDir(dirPathName) {
 function toStandardPath(url) {
    url = path.resolve(url)
    url = fs.realpathSync.native(url)
-   if (url != "/" && url != "\\" && existDir(url)) {
+   if (!url.endsWith("/") && !url.endsWith("\\") && existDir(url)) {
       url = url + path.sep
    }
    if (window.utools.isWindows()) {
@@ -111,8 +111,6 @@ function searchPathOnDisk(url) {
       }
    }
    parent = parent && parent != '/' ? parent + path.sep : parent;
-   console.log(parent)
-   console.log(searchWord)
    var results = []
    if (!searchWord && parent != '/') {
       const standardParent = toStandardPath(parent)
@@ -128,7 +126,10 @@ function searchPathOnDisk(url) {
       return searchDiskRoots(searchWord)
    }
    const lowerSearchWord = searchWord.toLocaleLowerCase()
-   fs.readdirSync(parent).forEach(function (file) {
+   fs.readdirSync(parent).forEach((file) => {
+      if (file == "System Volume Information") {
+         return;
+      }
       url = parent + file
       const standardUrl = toStandardPath(url)
       if (existDir(url) && file.toLocaleLowerCase().startsWith(lowerSearchWord)) {
@@ -504,11 +505,11 @@ window.exports = {
       args: {
          enter: (action, callbackSetList) => {
             var url = convertToRealpath("")
-            callbackSetList(searchPathOnDisk(url, callbackSetList))
+            callbackSetList(searchPathOnDisk(url))
          },
          search: (action, searchWord, callbackSetList) => {
             var url = convertToRealpath(searchWord)
-            callbackSetList(searchPathOnDisk(url, callbackSetList))
+            callbackSetList(searchPathOnDisk(url))
          },
          select: (action, itemData, callbackSetList) => {
             var url = utools.getCurrentFolderPath()
