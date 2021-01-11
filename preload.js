@@ -3,8 +3,25 @@ var path = require('path');
 var execSync = require('child_process').execSync;
 const allowExts = ['.py']
 
+function existDir(dirPathName) {
+   try {
+      var stat = fs.statSync(dirPathName);
+      if (stat.isDirectory()) {
+         return true;
+      } else {
+         return false;
+      }
+   } catch (error) {
+      return false;
+   }
+}
+
 function toStandardPath(url) {
    url = path.resolve(url)
+   url = fs.realpathSync.native(url)
+   if (url != "/" && url != "\\" && existDir(url)) {
+      url = url + path.sep
+   }
    if (window.utools.isWindows()) {
       const pos = url.indexOf(':')
       if (pos > 0) {
@@ -14,9 +31,30 @@ function toStandardPath(url) {
    return url;
 }
 
+function convertToRealpath(searchWord) {
+   var url = utools.getCurrentFolderPath()
+   if (typeof url === 'string' && url) {
+      url = url + path.sep
+   }
+   else {
+      url = ""
+   }
+   return url + searchWord;
+}
+
+function convertFromRealpath(realUrl) {
+   var url = utools.getCurrentFolderPath()
+   if (typeof url === 'string' && url) {
+      return path.relative(url, fs.realpathSync.native(realUrl)) + path.sep;
+   }
+   else {
+      return fs.realpathSync.native(realUrl) + path.sep;
+   }
+}
+
 function getBasename(url) {
    var basename = path.basename(url)
-   if (!basename) {
+   if (!basename && window.utools.isWindows()) {
       basename = url
    }
    return url;
@@ -47,38 +85,36 @@ function searchDiskRoots(searchWord) {
    return items;
 }
 
-function existDir(dirPathName) {
-   try {
-      var stat = fs.statSync(dirPathName);
-      if (stat.isDirectory()) {
-         return true;
-      } else {
-         return false;
-      }
-   } catch (error) {
-      return false;
-   }
-}
-
 function searchPathOnDisk(url) {
+   console.log("searchPathOnDisk: " + url)
    if (!url) {
-      return searchDiskRoots("")
+      if (window.utools.isWindows()) {
+         return searchDiskRoots("")
+      }
+      else {
+         url = "/"
+      }
    }
    var pos = url.lastIndexOf('\\')
    const pos2 = url.lastIndexOf('/')
    pos = pos < pos2 ? pos2 : pos;
    var parent = ""
    var searchWord = url
-   if (pos > 0) {
+   if (pos >= 0) {
       parent = url.substr(0, pos)
+      if (parent == "") {
+         parent = window.utools.isWindows() ? parent : '/'
+      }
       searchWord = url.substr(pos + 1)
       if (!existDir(parent)) {
          return [];
       }
    }
-   parent = parent ? parent + path.sep : parent;
+   parent = parent && parent != '/' ? parent + path.sep : parent;
+   console.log(parent)
+   console.log(searchWord)
    var results = []
-   if (!searchWord) {
+   if (!searchWord && parent != '/') {
       const standardParent = toStandardPath(parent)
       results.push({
          title: "添加选定目录：" + getBasename(parent),
@@ -215,6 +251,7 @@ function searchScripts(url, callbackAddScripts) {
    if (!existDir(url)) {
       return;
    }
+   url = path.resolve(url) + path.sep
    process = (err, base, files) => {
       if (err) {
          return;
@@ -462,9 +499,14 @@ window.exports = {
       mode: "list",
       args: {
          enter: (action, callbackSetList) => {
-            callbackSetList(searchPathOnDisk("", callbackSetList))
+            var url = convertToRealpath("")
+            callbackSetList(searchPathOnDisk(url, callbackSetList))
          },
          search: (action, searchWord, callbackSetList) => {
+            var url = convertToRealpath(searchWord)
+            callbackSetList(searchPathOnDisk(url, callbackSetList))
+         },
+         select: (action, itemData, callbackSetList) => {
             var url = utools.getCurrentFolderPath()
             if (typeof url === 'string' && url) {
                url = url + path.sep
@@ -472,12 +514,8 @@ window.exports = {
             else {
                url = ""
             }
-            url = url + searchWord
-            callbackSetList(searchPathOnDisk(url, callbackSetList))
-         },
-         select: (action, itemData, callbackSetList) => {
             if (itemData.blur) {
-               utools.setSubInputValue(itemData.url + path.sep)
+               utools.setSubInputValue(convertFromRealpath(itemData.url))
             }
             else if (addDirToDB(itemData.url)) {
                utools.hideMainWindow()

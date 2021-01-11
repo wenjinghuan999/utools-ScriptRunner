@@ -6,7 +6,7 @@
     "logo": "python.png",
     "author": "wenjinghuan999",
     "homepage": "https://github.com/wenjinghuan999/utools-ScriptRunner",
-    "platform": ["win32"],
+    "platform": ["win32", "darwin"],
 	"features": [
 		{
 		  "code": "setup-add",
