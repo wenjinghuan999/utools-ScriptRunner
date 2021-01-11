@@ -391,6 +391,10 @@ function removeAllScriptCommands() {
    for (var url in data.data) {
       removeScriptCommands(url)
    }
+   const features = window.utools.getFeatures()
+   features.forEach(value => {
+      window.utools.removeFeature(value.code)
+   })
 }
 
 function searchAllWordsInFilename(file, searchWords) {
