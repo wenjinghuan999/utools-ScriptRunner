@@ -329,7 +329,12 @@ function addScriptCommands(url, scripts) {
          args: {
             enter: (action) => {
                window.utools.hideMainWindow()
-               require('electron').shell.openExternal(file)
+               if (window.utools.isWindows()){
+                  require('electron').shell.openExternal(file)
+               }
+               else {
+                  require('child_process').spawn("python", [file])
+               }
                window.utools.outPlugin()
             }  
          } 
