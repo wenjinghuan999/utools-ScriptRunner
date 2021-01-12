@@ -2,6 +2,8 @@ var fs = require("fs");
 var path = require('path');
 var execSync = require('child_process').execSync;
 const allowExts = { '.py': 'python', '.js': 'node', '.sh': '', '.bat': '' };
+var envVars = require('process').env;
+envVars.PATH = envVars.PATH + ':/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
 
 function existDir(dirPathName) {
    try {
@@ -332,14 +334,21 @@ function addScriptCommands(url, scripts) {
             enter: (action) => {
                window.utools.hideMainWindow()
                if (command) {
-                  require('child_process').spawn(command, [file])
+                  console.log('Run: ' + command + ' ' + file)
+                  require('child_process').spawn(command, [file], options={
+                     env: envVars
+                  })
                }
                else {
                   if (window.utools.isWindows()) {
+                     console.log('Open: ' + file)
                      require('electron').shell.openExternal(file)
                   }
                   else {
-                     require('child_process').spawn(file)
+                     console.log('Run: ' + file)
+                     require('child_process').spawn(file, options={
+                        env: envVars
+                     })
                   }
                }
                window.utools.outPlugin()
