@@ -321,36 +321,40 @@ function getScriptsFromDB(url) {
    return data.data[url];
 }
 
+function runCommand(file) {
+   const ext = path.extname(file)
+   const command = allowExts[ext]
+   if (command) {
+      console.log('Run: ' + command + ' ' + file)
+      require('child_process').spawn(command, [file], options={
+         env: envVars
+      })
+   }
+   else {
+      if (window.utools.isWindows()) {
+         console.log('Open: ' + file)
+         require('electron').shell.openExternal(file)
+      }
+      else {
+         console.log('Run: ' + file)
+         require('child_process').spawn(file, options={
+            env: envVars
+         })
+      }
+   }
+}
+
 function addScriptCommands(url, scripts) {
    console.log("add scripts for url: " + url)
    scripts.forEach(file => {
       console.log(" - " + file)
       const code = path.basename(file)
-      const ext = path.extname(file)
-      const command = allowExts[ext]
       window.exports[file] = {
          mode: "none",
          args: {
             enter: (action) => {
                window.utools.hideMainWindow()
-               if (command) {
-                  console.log('Run: ' + command + ' ' + file)
-                  require('child_process').spawn(command, [file], options={
-                     env: envVars
-                  })
-               }
-               else {
-                  if (window.utools.isWindows()) {
-                     console.log('Open: ' + file)
-                     require('electron').shell.openExternal(file)
-                  }
-                  else {
-                     console.log('Run: ' + file)
-                     require('child_process').spawn(file, options={
-                        env: envVars
-                     })
-                  }
-               }
+               runCommand(file)
                window.utools.outPlugin()
             }  
          } 
@@ -624,7 +628,7 @@ window.exports = {
          select: (action, itemData, callbackSetList) => {
             const file = itemData.url
             window.utools.hideMainWindow()
-            require('electron').shell.openExternal(file)
+            runCommand(file)
             window.utools.outPlugin()
          },
          placeholder: "运行脚本"
