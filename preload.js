@@ -327,6 +327,8 @@ function runCommand(file) {
    if (command) {
       console.log('Run: ' + command + ' ' + file)
       require('child_process').spawn(command, [file], options={
+         detached: true,
+         shell: true,
          env: envVars
       })
    }
@@ -338,6 +340,8 @@ function runCommand(file) {
       else {
          console.log('Run: ' + file)
          require('child_process').spawn(file, options={
+            detached: true,
+            shell: true,
             env: envVars
          })
       }
