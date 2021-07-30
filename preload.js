@@ -115,14 +115,19 @@ function searchPathOnDisk(url) {
    parent = parent && parent != '/' ? parent + path.sep : parent;
    var results = []
    if (!searchWord && parent != '/') {
-      const standardParent = toStandardPath(parent)
-      results.push({
-         title: "添加选定目录：" + getBasename(parent),
-         description: standardParent,
-         icon: utools.getFileIcon(standardParent),
-         url: standardParent,
-         blur: false
-      })
+      try {
+         const standardParent = toStandardPath(parent)
+         results.push({
+            title: "添加选定目录：" + getBasename(parent),
+            description: standardParent,
+            icon: utools.getFileIcon(standardParent),
+            url: standardParent,
+            blur: false
+         })
+      } catch (error) {
+         console.log("Error occurred when adding path \"" + parent + "\", this error can be ignored:")
+         console.log(error)
+      }
    }
    else if (!parent) {
       return searchDiskRoots(searchWord)
@@ -133,15 +138,20 @@ function searchPathOnDisk(url) {
          return;
       }
       url = parent + file
-      const standardUrl = toStandardPath(url)
-      if (existDir(url) && file.toLocaleLowerCase().startsWith(lowerSearchWord)) {
-         results.push({
-            title: file,
-            description: standardUrl,
-            icon: window.utools.getFileIcon(standardUrl),
-            url: standardUrl,
-            blur: file != searchWord
-         })
+      try {
+         const standardUrl = toStandardPath(url)
+         if (existDir(url) && file.toLocaleLowerCase().startsWith(lowerSearchWord)) {
+            results.push({
+               title: file,
+               description: standardUrl,
+               icon: window.utools.getFileIcon(standardUrl),
+               url: standardUrl,
+               blur: file != searchWord
+            })
+         }
+      } catch (error) {
+         console.log("Error occurred when adding path \"" + parent + "\", this error can be ignored:")
+         console.log(error)
       }
    })
    return results;
