@@ -157,25 +157,48 @@ function searchPathOnDisk(url) {
    return results;
 }
 
+function getFromLocalDB(id, default_data) {
+   const local_id = id + '_' + window.utools.getLocalId()
+   var value = window.utools.db.get(local_id)
+   if (!value) {
+      value = window.utools.db.get(id)
+      if (!value) {
+         if (default_data === undefined) {
+            return undefined;
+         } else {
+            return { _id: local_id, data: default_data }
+         }
+      } else {
+         value._id = local_id
+         window.utools.db.put(value)
+         return value;
+      }
+   } else {
+      return value;
+   }
+}
+
+function putToLocalDB(id, value) {
+   const local_id = id + '_' + window.utools.getLocalId()
+   if (value._id !== local_id) {
+      value._id = local_id
+   }
+   window.utools.db.put(value)
+}
+
 function addDirToDB(url) {
    const id = 'dirs'
-   var dirs = window.utools.db.get(id)
-   if (!dirs) {
-      dirs = { 
-         _id: id,
-         data: [],
-      }
-   }
+   var dirs = getFromLocalDB(id, [])
    if (dirs.data.indexOf(url) < 0) {
       dirs.data.push(url)
    }
-   window.utools.db.put(dirs)
+   putToLocalDB(id, dirs)
    return true;
 }
 
 function getDirsFromDB() {
    const id = 'dirs'
-   var dirs = window.utools.db.get(id)
+   var dirs = getFromLocalDB(id)
    if (!dirs) {
       return [];
    }
@@ -217,14 +240,14 @@ function searchDirsFromDB(searchWord) {
 
 function removeDirFromDB(url) {
    const id = 'dirs'
-   var dirs = window.utools.db.get(id)
+   var dirs = getFromLocalDB(id)
    if (!dirs) {
       return false;
    }
    const idx = dirs.data.indexOf(url)
    if (idx >= 0) {
       dirs.data.splice(idx, 1)
-      window.utools.db.put(dirs)
+      putToLocalDB(id, dirs)
       return true;
    }
    return false;
@@ -232,15 +255,9 @@ function removeDirFromDB(url) {
 
 function clearAllDirsFromDB() {
    const id = 'dirs'
-   var dirs = window.utools.db.get(id)
-   if (!dirs) {
-      dirs = { 
-         _id: id,
-         data: [],
-      }
-   }
+   var dirs = getFromLocalDB(id, [])
    dirs.data = []
-   window.utools.db.put(dirs)
+   putToLocalDB(id, dirs)
 }
 
 function generateListItemForClearAllDirs(searchWord) {
@@ -304,13 +321,7 @@ function searchAllScripts(callbackAddScripts) {
 
 function addScriptsToDB(url, scripts) {
    const id = 'scripts'
-   var data = window.utools.db.get(id)
-   if (!data || typeof(data.data) !== "object") {
-      data = { 
-         _id: id,
-         data: {},
-      }
-   }
+   var data = getFromLocalDB(id, {})
    scripts.forEach(file => {
       if ("undefined" === typeof(data.data[url])) {
          data.data[url] = [file]
@@ -319,12 +330,12 @@ function addScriptsToDB(url, scripts) {
          data.data[url].push(file)
       }
    })
-   window.utools.db.put(data)
+   putToLocalDB(id, data)
 }
 
 function getScriptsFromDB(url) {
    const id = 'scripts'
-   var data = window.utools.db.get(id)
+   var data = getFromLocalDB(id)
    if (!data || typeof(data.data) !== "object" || !data.data[url]) {
       return [];
    }
@@ -386,7 +397,7 @@ function addScriptCommands(url, scripts) {
 
 function maybeRemoveScriptCommand(url, file) {
    const id = 'scripts'
-   var data = window.utools.db.get(id)
+   var data = getFromLocalDB(id)
    if (!data || typeof(data.data) !== "object") {
       window.utools.removeFeature(file)
       return true;
@@ -414,17 +425,17 @@ function removeScriptCommands(url) {
       maybeRemoveScriptCommand(url, file)
    })
    const id = 'scripts'
-   var data = window.utools.db.get(id)
+   var data = getFromLocalDB(id)
    if (!data || typeof(data.data) !== "object" || !data.data[url]) {
       return;
    }
    delete data.data[url]
-   window.utools.db.put(data)
+   putToLocalDB(id, data)
 }
 
 function removeAllScriptCommands() {
    const id = 'scripts'
-   var data = window.utools.db.get(id)
+   var data = getFromLocalDB(id)
    if (!data || typeof(data.data) !== "object") {
       return;
    }
@@ -468,7 +479,7 @@ function searchAllWords(file, searchWords) {
 
 function searchAllScriptCommands(searchWords) {
    const id = 'scripts'
-   var data = window.utools.db.get(id)
+   var data = getFromLocalDB(id)
    if (!data || typeof(data.data) !== "object") {
       return;
    }
