@@ -1,5 +1,30 @@
 {
   "devDependencies": {
+    "@types/node": "^16.7.12",
+    "css-loader": "^6.2.0",
+    "declaration-bundler-webpack-plugin": "^1.0.3",
+    "electron": "^14.0.0",
+    "mini-css-extract-plugin": "^2.2.2",
+    "nano-jsx": "^0.0.20",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
+    "style-loader": "^3.2.1",
+    "ts-loader": "^9.2.5",
+    "typescript": "^4.4.2",
     "utools-api-types": "^2.0.6"
-  }
+  },
+  "name": "utools-scriptrunner",
+  "description": "utools-ScriptRunner",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "bash build.sh"
+  },
+  "repository": "git+https://github.com/wenjinghuan999/utools-ScriptRunner.git",
+  "author": "wenjinghuan999",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wenjinghuan999/utools-ScriptRunner/issues"
+  },
+  "homepage": "https://github.com/wenjinghuan999/utools-ScriptRunner#readme",
+  "main": "preload.js"
 }

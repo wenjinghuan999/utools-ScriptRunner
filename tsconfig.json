@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "CommonJS",
+    "target": "ESNext",
+    "allowJs": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "downlevelIteration": true,
+    "moduleResolution"  : "Node",
+    "esModuleInterop"   : true,
+    "removeComments"    : true,
+    "types"             : [
+      "@types/node",
+      "utools-api-types"
+    ],
+    "jsx"               : "react",
+    "jsxFactory"        : "Nano.h"
+  },
+  "files": ["src/index.tsx"]
+}

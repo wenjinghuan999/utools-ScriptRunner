@@ -1,7 +1,7 @@
 {
 	"pluginName": "脚本运行",
 	"description": "可将监视目录下的所有python脚本文件自动加入关键字列表",
-	"version": "0.0.5",
+	"version": "1.0.0",
     "preload": "preload.js",
     "logo": "python.png",
     "author": "wenjinghuan999",
@@ -9,9 +9,9 @@
     "platform": ["win32", "darwin"],
 	"features": [
 		{
-		  "code": "setup-add",
-		  "explain": "脚本运行插件设置：添加监视目录",
-          "cmds":["脚本运行添加目录", "Add Folder for ScriptRunner"]
+		   "code": "setup-add",
+		   "explain": "脚本运行插件设置：添加监视目录",
+           "cmds":["脚本运行添加目录", "Add Folder for ScriptRunner"]
 		},
 		{
             "code": "setup-remove",
@@ -27,6 +27,11 @@
             "code": "setup-refresh-scripts",
             "explain": "脚本运行插件设置：重新扫描所有监视目录",
             "cmds":["脚本运行重新扫描", "Refresh ScriptRunner"]
+        },
+		{
+            "code": "setup-configurations",
+            "explain": "脚本运行插件设置：详细配置",
+            "cmds":["脚本运行环境设置", "ScriptRunner Setup"]
         },
 		{
             "code": "run-script",
