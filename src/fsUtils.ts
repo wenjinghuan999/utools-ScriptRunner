@@ -2,9 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
 import { SearchDiskDirItem } from './types';
-const allowExts = { '.py': 'python', '.js': 'node', '.sh': '', '.bat': '' };
-var envVars = require('process').env;
-envVars.PATH = envVars.PATH + ':/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
+import { Data } from './dataUtils';
 
 async function existDir(dirPathName: string): Promise<boolean> {
     try {
@@ -154,19 +152,27 @@ async function searchScripts(url: string): Promise<string[]> {
        return [];
     }
     url = path.resolve(url) + path.sep;
+    const allowPatterns = Data.getAllowPatterns();
+    console.log('Patterns:');
+    console.log(allowPatterns);
 
     const process = async (base: string, files: string[]): Promise<string[]> => {
         const fullFiles = files.map(file => path.join(base, file));
         const isDirs = await Promise.all(fullFiles.map(fullFile => existDir(fullFile)));
-        
         const scripts: string[] = [];
         const subDirs: string[] = [];
         isDirs.forEach((isDir, idx) => {
             const fullFile = fullFiles[idx];
+            const filename = files[idx];
             if (isDir) {
                 subDirs.push(fullFile);
-            } else if (path.extname(fullFile) in allowExts) {
-                scripts.push(fullFile);
+            } else {
+                for (const pattern of allowPatterns) {
+                    if (filename.match(pattern)) {
+                        scripts.push(fullFile);
+                        break;
+                    }
+                }
             }
         })
 

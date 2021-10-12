@@ -1,3 +1,5 @@
+import { Settings } from './settings';
+
 abstract class DBDocBase {
     abstract readonly id: string;
     abstract readonly enableSync: boolean;
@@ -27,4 +29,10 @@ export class DBScripts extends DBDocBase {
     readonly id = 'scripts';
     readonly enableSync = false;
     public data: Record<string, string[]> = {};
+}
+
+export class DBSettings extends DBDocBase {
+    readonly id = 'settings';
+    readonly enableSync = false;
+    public data: Settings = new Settings();
 }

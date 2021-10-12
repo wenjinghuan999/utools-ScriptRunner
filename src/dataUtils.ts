@@ -1,10 +1,12 @@
-import { DBDirs, DBScripts } from "./dbUtils";
+import { DBDirs, DBScripts, DBSettings } from "./dbUtils";
 import { SearchDBDirItem } from './types';
 import { getBasename } from './commonUtils';
+import { Settings } from "./settings";
 
 export class Data {
     private static dbDirs = new DBDirs();
     private static dbScripts = new DBScripts();
+    private static dbSettings = new DBSettings();
 
     public static addDir(dir: string): boolean {
         this.dbDirs.load();
@@ -109,5 +111,25 @@ export class Data {
     public static removeAllScripts() {
         this.dbScripts.data = {};
         this.dbScripts.store();
+    }
+
+    public static getSettings(): Settings {
+        this.dbSettings.load();
+        return this.dbSettings.data;
+    }
+
+    public static setSettings(settings: Settings) {
+        this.dbSettings.data = settings;
+        this.dbSettings.store();
+    }
+
+    public static getAllowPatterns(): RegExp[] {
+        this.dbSettings.load();
+        const patterns: RegExp[] = [];
+        for (const id in this.dbSettings.data.fileTypes) {
+            const fileType = this.dbSettings.data.fileTypes[id];
+            patterns.push(new RegExp(fileType.pattern, 'i'));
+        }
+        return patterns;
     }
 }

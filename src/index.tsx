@@ -96,6 +96,20 @@ const windowExports = {
             placeholder: '重新扫描所有监视目录'
         }
     },
+    'setup-configurations': {
+        mode: 'list',
+        args: {
+            enter: (action: any, callbackSetList: Function) => {
+                console.log(Data.getSettings());
+                Data.setSettings(Data.getSettings());
+                callbackSetList([]);
+            },
+            select: (action: any, itemData: RefreshScriptsListItem, callbackSetList: Function) => {
+                callbackSetList([]);
+            },
+            placeholder: '设置'
+        }
+    },
     'run-script': {
         mode: 'list',
         args: {
