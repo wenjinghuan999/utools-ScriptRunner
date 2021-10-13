@@ -19,13 +19,15 @@ function addScriptFeature(dir: string, script: string) {
         }
     };
     window.utools.removeFeature(script);
-    window.utools.setFeature({
-        code: script,
-        explain: script + "（位于监视目录：" + dir + "）",
-        platform: ['darwin', 'win32'],
-        // @ts-ignore
-        cmds: [filename, script]
-    });
+    if (Data.getGlobalSettings().createFeature) {
+        window.utools.setFeature({
+            code: script,
+            explain: script + "（位于监视目录：" + dir + "）",
+            platform: ['darwin', 'win32'],
+            // @ts-ignore
+            cmds: [filename, script]
+        });
+    }
 }
 
 async function searchAndAddScriptsAndFeatures(dir: string) {
@@ -56,13 +58,15 @@ function maybeRemoveScriptFeature(dir: string, script: string) {
             const filename = path.basename(script)
 
             window.utools.removeFeature(script);
-            window.utools.setFeature({
-                code: script,
-                explain: script + "（位于监视目录：" + dir_ + "）",
-                platform: ['darwin', 'win32'],
-                // @ts-ignore
-                cmds: [filename, script]
-            });
+            if (Data.getGlobalSettings().createFeature) {
+                window.utools.setFeature({
+                    code: script,
+                    explain: script + "（位于监视目录：" + dir_ + "）",
+                    platform: ['darwin', 'win32'],
+                    // @ts-ignore
+                    cmds: [filename, script]
+                });
+            }
             return false;
         }
     }

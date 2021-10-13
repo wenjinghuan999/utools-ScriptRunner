@@ -1,16 +1,17 @@
-import { Settings } from './settings';
+import { LocalSettings, GlobalSettings } from './settings';
 
-abstract class DBDocBase {
+abstract class DBDocBase<T> {
     abstract readonly id: string;
     abstract readonly enableSync: boolean;
-    public abstract data: any;
+    public abstract data: T;
 
-    public load(): void {
+    public load(): T {
         const local_id = this.enableSync ? this.id : this.id + '_' + window.utools.getNativeId()
         const data = window.utools.dbStorage.getItem(local_id);
         if (data !== undefined && data !== null) {
             this.data = data;
         }
+        return this.data;
     }
 
     public store(): void {
@@ -19,20 +20,26 @@ abstract class DBDocBase {
     }
 }
 
-export class DBDirs extends DBDocBase {
+export class DBDirs extends DBDocBase<string[]> {
     readonly id = 'dirs';
     readonly enableSync = false;
     public data: string[] = [];
 }
 
-export class DBScripts extends DBDocBase {
+export class DBScripts extends DBDocBase<Record<string, string[]>> {
     readonly id = 'scripts';
     readonly enableSync = false;
     public data: Record<string, string[]> = {};
 }
 
-export class DBSettings extends DBDocBase {
+export class DBLocalSettings extends DBDocBase<LocalSettings> {
     readonly id = 'settings';
     readonly enableSync = false;
-    public data: Settings = new Settings();
+    public data = new LocalSettings();
+}
+
+export class DBGlobalSettings extends DBDocBase<GlobalSettings> {
+    readonly id = 'global-settings';
+    readonly enableSync = true;
+    public data = new GlobalSettings();
 }

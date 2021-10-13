@@ -1,12 +1,13 @@
-import { DBDirs, DBScripts, DBSettings } from "./dbUtils";
+import { DBDirs, DBScripts, DBLocalSettings, DBGlobalSettings } from "./dbUtils";
 import { SearchDBDirItem } from './types';
 import { getBasename } from './commonUtils';
-import { Settings } from "./settings";
+import { FileTypeSettingItem, GlobalSettings, LocalSettings } from "./settings";
 
 export class Data {
     private static dbDirs = new DBDirs();
     private static dbScripts = new DBScripts();
-    private static dbSettings = new DBSettings();
+    private static dbLocalSettings = new DBLocalSettings();
+    private static dbGlobalSettings = new DBGlobalSettings();
 
     public static addDir(dir: string): boolean {
         this.dbDirs.load();
@@ -19,15 +20,14 @@ export class Data {
     }
 
     public static getAllDirs(): string[] {
-        this.dbDirs.load();
-        return this.dbDirs.data;
+        return this.dbDirs.load();
     }
 
     public static searchDir(searchWord: string): SearchDBDirItem[] {
-        this.dbDirs.load();
+        const allDirs = this.dbDirs.load();
         const lowerSearchWord = searchWord.toLocaleLowerCase();
         const results: SearchDBDirItem[] = [];
-        this.dbDirs.data.forEach(url => {
+        allDirs.forEach(url => {
             const lowerUrl = url.toLocaleLowerCase();
             let pos = searchWord ? lowerUrl.indexOf(lowerSearchWord) : 0;
             if (pos >= 0) {
@@ -86,17 +86,16 @@ export class Data {
     }
 
     public static getScripts(dir: string): string[] {
-        this.dbScripts.load();
-        if (!this.dbScripts.data[dir]) {
+        const scripts = this.dbScripts.load();
+        if (!scripts[dir]) {
             return [];
         } else {
-            return this.dbScripts.data[dir];
+            return scripts[dir];
         }
     }
 
     public static getAllScripts(): Record<string, string[]> {
-        this.dbScripts.load();
-        return this.dbScripts.data;
+        return this.dbScripts.load();
     }
 
     public static removeScripts(dir: string) {
@@ -113,23 +112,42 @@ export class Data {
         this.dbScripts.store();
     }
 
-    public static getSettings(): Settings {
-        this.dbSettings.load();
-        return this.dbSettings.data;
+    public static getLocalSettings(): LocalSettings {
+        return this.dbLocalSettings.load();
     }
 
-    public static setSettings(settings: Settings) {
-        this.dbSettings.data = settings;
-        this.dbSettings.store();
+    public static setLocalSettings(settings: LocalSettings) {
+        this.dbLocalSettings.data = settings;
+        this.dbLocalSettings.store();
+    }
+
+    public static getGlobalSettings(): GlobalSettings {
+        return this.dbGlobalSettings.load();
+    }
+
+    public static setGlobalSettings(settings: GlobalSettings) {
+        this.dbGlobalSettings.data = settings;
+        this.dbGlobalSettings.store();
     }
 
     public static getAllowPatterns(): RegExp[] {
-        this.dbSettings.load();
+        const settings = this.dbLocalSettings.load();
         const patterns: RegExp[] = [];
-        for (const id in this.dbSettings.data.fileTypes) {
-            const fileType = this.dbSettings.data.fileTypes[id];
+        for (const id in settings.fileTypes) {
+            const fileType = settings.fileTypes[id];
             patterns.push(new RegExp(fileType.pattern, 'i'));
         }
         return patterns;
+    }
+
+    public static findFileType(script: string): FileTypeSettingItem | null {
+        const settings = this.dbLocalSettings.load();
+        for (const id in settings.fileTypes) {
+            const fileType = settings.fileTypes[id];
+            if (script.match(fileType.pattern)) {
+                return fileType;
+            }
+        }
+        return null;
     }
 }

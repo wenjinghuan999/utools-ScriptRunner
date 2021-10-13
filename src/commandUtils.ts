@@ -3,21 +3,9 @@ import child_process from 'child_process';
 import electron from 'electron';
 import process from 'process';
 import { Data } from './dataUtils';
-import { FileTypeSettingItem, Settings } from './settings';
-
-function findFileType(script: string, settings: Settings): FileTypeSettingItem | null {
-    for (const id in settings.fileTypes) {
-        const fileType = settings.fileTypes[id];
-        if (script.match(fileType.pattern)) {
-            return fileType;
-        }
-    }
-    return null;
-}
 
 function runCommand(script: string) {
-    const settings = Data.getSettings();
-    const fileType = findFileType(script, settings);
+    const fileType = Data.findFileType(script);
     if (!fileType) {
         return;
     }
@@ -26,7 +14,7 @@ function runCommand(script: string) {
 
     const command = fileType.command;
     const envVars = process.env;
-    envVars.PATH = envVars.PATH + settings.globalSettings.env;
+    envVars.PATH = envVars.PATH + Data.getLocalSettings().commonSettings.env;
 
     if (command) {
         console.log('Run: ' + command + ' ' + script);
