@@ -3,6 +3,8 @@ $dist="dist"
 Remove-Item -Force -Recurse $dist
 mkdir $dist
 
+node .\buildcss.js
+
 Copy-Item -Recurse -Path .\public\* $dist
 tsc --outDir $dist
 

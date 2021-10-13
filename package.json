@@ -26,5 +26,8 @@
     "url": "https://github.com/wenjinghuan999/utools-ScriptRunner/issues"
   },
   "homepage": "https://github.com/wenjinghuan999/utools-ScriptRunner#readme",
-  "main": "preload.js"
+  "main": "preload.js",
+  "dependencies": {
+    "stylus": "^0.55.0"
+  }
 }

@@ -4,6 +4,7 @@ import { ClearAllDirsListItem, DBDirListItem, DiskDirListItem, RefreshScriptsLis
 import { searchAndAddScriptsAndFeatures, searchAndAddAllScriptsAndFeatures, removeAllScriptsAndFeatures, removeScriptsAndFeatures } from './featureUtils';
 import { searchAllScriptCommands } from './searchUtils';
 import { runCommand } from './commandUtils';
+import { SettingsComponent } from './components/SettingsComponent';
 
 const windowExports = {
     'setup-add': {
@@ -97,15 +98,16 @@ const windowExports = {
         }
     },
     'setup-configurations': {
-        mode: 'list',
+        mode: 'none',
         args: {
             enter: (action: any, callbackSetList: Function) => {
-                console.log(Data.getSettings());
-                Data.setSettings(Data.getSettings());
-                callbackSetList([]);
-            },
-            select: (action: any, itemData: RefreshScriptsListItem, callbackSetList: Function) => {
-                callbackSetList([]);
+                console.log(Data.getLocalSettings());
+                Data.setLocalSettings(Data.getLocalSettings());
+                console.log(Data.getGlobalSettings());
+                Data.setGlobalSettings(Data.getGlobalSettings());
+
+                utools.setExpendHeight(480);
+                SettingsComponent.DoRender();
             },
             placeholder: '设置'
         }

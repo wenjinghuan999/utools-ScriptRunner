@@ -1,0 +1,205 @@
+height100 = 100%
+
+@keyframes round-icon
+  0%
+    transform rotate(0deg)
+  100%
+    transform rotate(360deg)
+
+html
+  height height100
+
+  body
+    height height100
+
+    .flex-column-center
+      align-items flex-end
+      display flex
+      flex-direction column
+      justify-content center
+
+    .container
+      height height100
+
+      .columns
+        height height100
+
+        .column
+          height height100
+          overflow scroll
+
+          &::-webkit-scrollbar
+            display none
+
+          .badge[data-badge]
+            &::after
+              font-size 0.55rem
+              height 0.82rem
+
+            &.badge-unready::after
+              background-color #f3ae00
+
+            &.badge-error::after
+              background-color #ff0000
+
+          .form-switch
+            padding-left 1.2rem
+
+          .nav
+            height height100
+
+            .nav
+              margin-left 0
+
+            .nav-item
+              font-size 0.75rem
+              overflow visible
+              text-overflow ellipsis
+              white-space nowrap
+
+              .icon + b
+                margin-left 10px
+
+              .catalogue-app-icon
+                width 20px
+                height 20px
+                vertical-align middle
+
+              .catalogue-app-name
+                margin-left 7px
+                vertical-align middle
+
+          .form-item
+            border 0
+            border-radius 5px
+            box-shadow 0 0 10px #00000038;
+            padding 15px
+
+            .card-mark
+              color #d0d0d0
+              font-family sans-serif
+              font-size 0.7rem
+              height 0
+              text-align right
+              width 100%
+
+            .form-legend
+              font-size 1.3rem
+              font-weight bold
+              padding 0.5rem !important
+              vertical-align middle
+
+              .icon
+                height 45px
+                width 45px
+                vertical-align middle
+
+              .title
+                font-weight bold
+                margin-left 1rem
+                vertical-align middle
+
+            .form-group
+              .card-description
+                color gray
+                font-size 0.7rem
+                margin-block-start: 10px;
+                margin-block-end: 10px;
+                padding 0 0.8rem
+                width 100%
+                word-break break-word
+
+              .setting-item-description
+                color gray
+                font-size 0.65rem
+                padding-bottom 5px
+                width 100%
+                word-break break-word
+
+              .input-group
+                .form-input
+                  display inline
+                  background-color white
+
+              .form-input-hint-error
+                color #e85600
+                font-size 0.7rem
+
+          .gap
+            height 8px
+
+          .information-card
+            .icon
+              height 42px
+              width 42px
+              vertical-align middle
+
+            .title
+              font-weight bold
+              margin-left 1.2rem
+
+          .plugin-settings-card
+            .icon
+              height 42px
+              width 42px
+              vertical-align middle
+              animation round-icon 10s linear infinite
+
+            .title
+              font-weight bold
+              font-size 1.3rem
+              margin-left 1rem
+              vertical-align middle
+
+            .form-label
+              font-size 0.75rem
+              font-weight 500
+
+              & + .form-description
+                color gray
+                font-size 0.65rem
+                width 100%
+                word-break break-word
+
+.container.dark
+  background-color #2f3031
+
+  .card
+    background-color #2f3031
+
+  .nav .nav-item a,
+  .form-legend .title,
+  .form-label,
+  .information-card .title,
+  .plugin-settings-card .title
+    color #dedede
+
+  .form-item .card-description
+    color #b4b4b4
+
+  .form-input
+    background-color #3c3c3c !important
+    border-color #464646
+    color #dedede
+
+    &.is-error
+      background-color #e85600 !important
+
+  .btn.btn-error
+    background #7d2f00
+    border-color #6d2800
+
+  .divider
+    border-color #424242
+
+  .modal
+    color #dedede
+
+    .modal-overlay
+      background #1d1d1ddd
+
+    .modal-title
+      color #dedede
+
+    .modal-container
+      background #2f3031

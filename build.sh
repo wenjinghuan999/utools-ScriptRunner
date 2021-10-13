@@ -5,6 +5,8 @@ dist='dist'
 rm -rf $dist
 mkdir $dist
 
+node buildcss.js
+
 cp -r public/* $dist
 tsc --outDir $dist
 
