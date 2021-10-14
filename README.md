@@ -35,6 +35,9 @@
 Change Log
 --
 
+- 1.0.0
+  - 新增：设置界面（鸣谢`utools-recent-projects`作者`LanyuanXiaoyao`）
+  - 新增：插件配置、文件类型配置
 - 0.0.7
   - 更新：现在监视目录数据存储在本地数据库。
 - 0.0.6
@@ -64,3 +67,4 @@ TODO
 
 - [uTools-QuickerCommand](https://github.com/fofolee/uTools-QuickerCommand)
 - [uTools-Plugin-FilePosition](https://github.com/feinir/uTools-Plugin-FilePosition)
+- [utools-recent-projects](https://github.com/LanyuanXiaoyao-Studio/utools-recent-projects)
