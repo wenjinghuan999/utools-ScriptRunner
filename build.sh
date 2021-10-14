@@ -36,6 +36,3 @@ cd $current_path
 cp -r "${temp}/node_modules" $dist/
 
 rm -rf $temp
-
-cd $current_path
-rm -r "src/styles.*.ts"
