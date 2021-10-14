@@ -23,7 +23,7 @@ export class SettingsComponent extends Component {
                 </head>
                 <body style={{ padding: '5px' }}>
                     <div id="root"/>
-                    <div class={utools.isDarkColors() ? 'container dark' : 'container'}>
+                    <div id="setting" class={utools.isDarkColors() ? 'container dark' : 'container'}>
                         <div class="columns">
                             <div class="column col-3">
                                 <CatalogueComponent localSettings={ Data.getLocalSettings() }/>

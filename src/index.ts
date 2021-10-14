@@ -11,6 +11,7 @@ const windowExports = {
         mode: 'list',
         args: {
             enter: (action: any, callbackSetList: Function) => {
+                document.getElementById('setting')?.remove();
                 convertToRealpath('').then(url => {
                     return searchPathOnDisk(url);
                 }).then(items => {
@@ -43,6 +44,7 @@ const windowExports = {
         mode: 'list',
         args: {
             enter: (action: any, callbackSetList: Function) => {
+                document.getElementById('setting')?.remove();
                 callbackSetList(Data.searchDir('').map(item => new DBDirListItem(item)))
             },
             search: (action: any, searchWord: string, callbackSetList: Function) => {
@@ -65,6 +67,7 @@ const windowExports = {
         mode: 'list',
         args: {
             enter: (action: any, callbackSetList: Function) => {
+                document.getElementById('setting')?.remove();
                 callbackSetList([new ClearAllDirsListItem('')]);
             },
             search: (action: any, searchWord: string, callbackSetList: Function) => {
@@ -85,6 +88,7 @@ const windowExports = {
         mode: 'list',
         args: {
             enter: (action: any, callbackSetList: Function) => {
+                document.getElementById('setting')?.remove();
                 callbackSetList([new RefreshScriptsListItem()])
             },
             select: (action: any, itemData: RefreshScriptsListItem, callbackSetList: Function) => {
@@ -116,6 +120,7 @@ const windowExports = {
         mode: 'list',
         args: {
             enter: (action: any, callbackSetList: Function) => {
+                document.getElementById('setting')?.remove();
                 callbackSetList(searchAllScriptCommands([]).map(item => new DBScriptListItem(item)));
             },
             search: (action: any, searchWord: string, callbackSetList: Function) => {
