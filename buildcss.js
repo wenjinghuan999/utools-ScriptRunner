@@ -11,7 +11,7 @@ fs.readdirSync(sourcePath).forEach(file => {
             const fullTarget = path.join(targetPath, file.split('.')[0] + '.ts');
             console.log('Rendering ' + file);
             console.log(fullFile + ' => ' + fullTarget);
-            const fileContent = fs.readFileSync(fullFile, {encoding: 'utf-8'}).replaceAll('`', '\\`');
+            const fileContent = fs.readFileSync(fullFile, {encoding: 'utf-8'}).replace(/`/g, '\\`');
             if (path.extname(file) == '.styl') {
                 stylus.render(fileContent, (error, result) => {
                     if (error) {
@@ -20,7 +20,7 @@ fs.readdirSync(sourcePath).forEach(file => {
                     else {
                         fs.writeFileSync(fullTarget, `// language=CSS
 export const Css: string = \`
-${result.replaceAll(/\n/g, '').trim()}
+${result.replace(/\n/g, '').trim()}
 \``
                             , {encoding: 'utf8', flag: 'w+'});
                     }
@@ -29,7 +29,7 @@ ${result.replaceAll(/\n/g, '').trim()}
                 const result = fileContent;
                 fs.writeFileSync(fullTarget, `// language=CSS
 export const Css: string = \`
-${result.replaceAll(/\n/g, '').trim()}
+${result.replace(/\n/g, '').trim()}
 \``
                     , {encoding: 'utf8', flag: 'w+'});
             }
