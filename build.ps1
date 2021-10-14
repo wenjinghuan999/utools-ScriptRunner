@@ -37,3 +37,6 @@ Set-Location $temp
 Set-Location $current_path
 Copy-Item -Recurse "$temp\node_modules" $dist
 Remove-Item -Force -Recurse $temp
+
+Set-Location $current_path
+Remove-Item -Force "src\styles\*.ts"
