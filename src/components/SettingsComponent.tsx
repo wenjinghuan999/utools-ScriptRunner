@@ -1,5 +1,6 @@
 import Nano, {Component, Fragment} from 'nano-jsx';
-import { Css } from '../styles/custom';
+import { Css as customCss } from '../styles/custom';
+import { Css as spectreCss } from '../styles/spectre';
 import { Data } from '../dataUtils';
 import { CatalogueComponent } from './CatalogueComponent';
 import { PluginSettingsCardComponent } from './PluginSettingsCardComponent';
@@ -15,10 +16,8 @@ export class SettingsComponent extends Component {
                         name="viewport"
                         content="width=device-width, initial-scale=1"
                     />
-                    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css" />
-                    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css" />
-                    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css" />
-                    <style>{ Css }</style>
+                    <style>{ spectreCss }</style>
+                    <style>{ customCss }</style>
                     <script src="index.js"/>
                 </head>
                 <body style={{ padding: '5px' }}>
