@@ -66,7 +66,7 @@ export class PluginSettingsCardComponent extends Component {
                                 </div>
                             </div>
                         </form>
-                        <SavedHintComponent store={ this.store } />
+                        <SavedHintComponent store={ this.store.use() } />
                     </div>
                 </div>
             </Fragment>

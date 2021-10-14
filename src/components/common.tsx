@@ -2,19 +2,19 @@ import Nano, { Component, Fragment } from 'nano-jsx';
 import { Store } from 'nano-jsx/lib/store';
 
 interface SavedHintProps {
-    store: Store;
+    store: ReturnType<typeof Store.prototype.use>;
 }
 
 export class SavedHintComponent extends Component {
-    store: ReturnType<typeof Store.prototype.use>;
+    parentStore: ReturnType<typeof Store.prototype.use>;
   
     constructor(props: SavedHintProps) {
         super(props);
-        this.store = props.store.use();
+        this.parentStore = props.store;
     }
 
     override didMount() {
-        this.store.subscribe((newState: any, prevState: any) => {
+        this.parentStore.subscribe((newState: any, prevState: any) => {
             if (newState.saved !== prevState.saved) {
                 this.update();
             }
@@ -22,7 +22,7 @@ export class SavedHintComponent extends Component {
     }
   
     override didUnmount() {
-        this.store.cancel();
+        this.parentStore.cancel();
     }
 
     override render () { 
@@ -30,7 +30,7 @@ export class SavedHintComponent extends Component {
             <Fragment>
                 <div
                     class="form-input-hint"
-                    style={`display: ${ this.store.state.saved ? 'block' : 'none' }`}
+                    style={`display: ${ this.parentStore.state.saved ? 'block' : 'none' }`}
                 >
                     设置已保存。
                 </div>
@@ -41,21 +41,21 @@ export class SavedHintComponent extends Component {
 
 interface TitleProps {
     title: string;
-    store: Store;
+    store: ReturnType<typeof Store.prototype.use>;
 }
 
 export class TitleComponent extends Component {
     title: string;
-    store: ReturnType<typeof Store.prototype.use>;
+    parentStore: ReturnType<typeof Store.prototype.use>;
   
     constructor(props: TitleProps) {
         super(props);
         this.title = props.title;
-        this.store = props.store.use();
+        this.parentStore = props.store;
     }
 
     override didMount() {
-        this.store.subscribe((newState: any, prevState: any) => {
+        this.parentStore.subscribe((newState: any, prevState: any) => {
             if (newState.dirty !== prevState.dirty) {
                 this.update();
             }
@@ -63,14 +63,14 @@ export class TitleComponent extends Component {
     }
   
     override didUnmount() {
-        this.store.cancel();
+        this.parentStore.cancel();
     }
 
     override render () { 
         return (
             <Fragment>
                 <span
-                    class={'title' + (this.store.state.dirty ? ' badge badge-unready' : '')}
+                    class={'title' + (this.parentStore.state.dirty ? ' badge badge-unready' : '')}
                     data-badge="已修改"
                 >
                     { this.title }

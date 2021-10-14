@@ -33,6 +33,7 @@ export class CatalogueComponent extends Component {
                     <div class="divider"/>
                     {
                         Object.keys(this.localSettings.fileTypes)
+                            .sort()
                             .map(key => (
                                 <li class="nav-item">
                                     <a href={'#' + FileTypeSettingItem.getId(this.localSettings.fileTypes[key].name)}>

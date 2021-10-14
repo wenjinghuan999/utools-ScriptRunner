@@ -1,12 +1,38 @@
 import Nano, {Component, Fragment} from 'nano-jsx';
+import { Store } from 'nano-jsx/lib/store';
 import { Css as customCss } from '../styles/custom';
 import { Css as spectreCss } from '../styles/spectre';
 import { Data } from '../dataUtils';
 import { CatalogueComponent } from './CatalogueComponent';
 import { PluginSettingsCardComponent } from './PluginSettingsCardComponent';
 import { FileTypeCardComponent } from './FileTypeCardComponent';
+import { clearInterval } from 'timers';
 
 export class SettingsComponent extends Component {
+    store = new Store({ dirtyId: '' });
+    
+    override didMount() {
+        this.store.use().subscribe((newState: any, prevState: any) => {
+            if (newState.dirtyId && newState.dirtyId !== prevState.dirtyId) {
+                const dirtyId = newState.dirtyId;
+                this.store.setState({ fileTypeListDirty: false });
+                console.log('Created observer for "' + dirtyId + '"');
+                setTimeout(() => {
+                    const e = document.getElementById(dirtyId);
+                    if (e) {
+                        console.log('Found "' + dirtyId + '"');
+                        location.hash = '#' + dirtyId;
+                    }
+                }, 50);
+                this.update();
+            }
+        })
+    }
+  
+    override didUnmount() {
+        this.store.use().cancel();
+    }
+
     override render(): HTMLElement | void {
         return (
             <Fragment>
@@ -32,8 +58,9 @@ export class SettingsComponent extends Component {
                                 <PluginSettingsCardComponent />
                                 {
                                     Object.keys(Data.getLocalSettings().fileTypes)
+                                    .sort()
                                     .map(key => (
-                                        <FileTypeCardComponent fileType={ key } />
+                                        <FileTypeCardComponent fileType={ key } store={ this.store.use() } />
                                     ))
                                 }
                                 <div class="gap"/>
