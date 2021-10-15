@@ -2,7 +2,7 @@ import Nano, { Component, Fragment, Img } from 'nano-jsx';
 import { Store } from 'nano-jsx/lib/store';
 import { Data } from '../dataUtils';
 import { FileTypeSettingItem } from '../settings';
-import { TitleComponent, SavedHintComponent } from './common';
+import { TitleComponent, SavedHintComponent, StringSettingItemComponent } from './common';
 
 interface FileTypeCardProps {
     fileType: string;
@@ -75,6 +75,7 @@ export class FileTypeCardComponent extends Component {
                     setting.fileTypes[this.name].extname = this.extname;
                     setting.fileTypes[this.name].command = this.command;
                 } else {
+                    console.log(setting.fileTypes[this.name]);
                     setting.fileTypes[this.name] = new FileTypeSettingItem(this.name, this.pattern, this.extname, this.command);
                 }
                 Data.setLocalSettings(setting);
@@ -122,54 +123,26 @@ export class FileTypeCardComponent extends Component {
                         <Img class="icon" src={ this.icon } />
                         <TitleComponent title={ this.name } store={ this.store.use() } />
                     </div>
-                    <div class="form-group card-body">
-                        <div class="form-group">
-                            <div class="form-label">名称</div>
-                            <div class="setting-item-description">
-                                文件类型的显示名称（唯一名称），如“Python”。
-                            </div>
-                            <div class="input-group">
-                                <input
-                                    type="text"
-                                    class={`form-input input-sm ${ this.isNameUnique(this.name) ? '' : 'is-error' }`}
-                                    value={ this.name }
-                                    placeholder="文件类型名称"
-                                    onkeydown={ () => { this.store.setState({ dirty: true, saved: false }); } }
-                                    onblur={ (event: any) => this.input(event, 'name') }
-                                />
-                            </div>
-                            <div
-                                class="form-input-hint-error"
-                                style={`display: ${this.isNameUnique(this.name) ? 'none' : 'block'}`}
-                            >
-                                文件类型名称不唯一。
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group card-body">
-                        <div class="form-group">
-                            <div class="form-label">正则表达式</div>
-                            <div class="setting-item-description">
-                                扫描脚本文件时应匹配的正则表达式。如“\.py$”。
-                            </div>
-                            <div class="input-group">
-                                <input
-                                    type="text"
-                                    class={`form-input input-sm ${ this.isRegExp(this.pattern) ? '' : 'is-error' }`}
-                                    value={ this.pattern }
-                                    placeholder="输入匹配的正则表达式"
-                                    onkeydown={ () => { this.store.setState({ dirty: true, saved: false }); } }
-                                    onblur={ (event: any) => this.input(event, 'pattern') }
-                                />
-                            </div>
-                            <div
-                                class="form-input-hint-error"
-                                style={`display: ${this.isRegExp(this.pattern) ? 'none' : 'block'}`}
-                            >
-                                正则表达式无效。
-                            </div>
-                        </div>
-                    </div>
+                    <StringSettingItemComponent 
+                        store={ this.store.use() }
+                        title="名称"
+                        value={ this.name }
+                        description="文件类型的显示名称（唯一名称），如“Python”。"
+                        placeholder="文件类型名称"
+                        errorMessage="文件类型名称不唯一。"
+                        checkError={ (value) => { return !this.isNameUnique(value); } }
+                        inputCallback={ (event) => { this.input(event, 'name'); } }
+                    />
+                    <StringSettingItemComponent 
+                        store={ this.store.use() }
+                        title="正则表达式"
+                        value={ this.pattern }
+                        description="扫描脚本文件时应匹配的正则表达式。如“\.py$”。"
+                        placeholder="输入匹配的正则表达式"
+                        errorMessage="正则表达式无效。"
+                        checkError={ (value) => { return !this.isRegExp(value); } }
+                        inputCallback={ (event) => { this.input(event, 'pattern'); } }
+                    />
                     <SavedHintComponent store={ this.store.use() } />
                 </div>
             </Fragment>

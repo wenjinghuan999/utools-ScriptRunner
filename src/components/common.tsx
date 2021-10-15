@@ -79,3 +79,71 @@ export class TitleComponent extends Component {
         );
     }
 }
+
+type CheckErrorFunc = (value: string) => boolean;
+type InputCallback = (event: { target?: { value?: string }}) => void;
+
+interface StringSettingItemProps {
+    store: ReturnType<typeof Store.prototype.use>;
+    title: string;
+    description: string;
+    placeholder: string;
+    errorMessage: string;
+    value: string;
+    checkError: CheckErrorFunc;
+    inputCallback: InputCallback;
+}
+
+export class StringSettingItemComponent extends Component {
+    parentStore: ReturnType<typeof Store.prototype.use>;
+    title: string;
+    description: string;
+    placeholder: string;
+    errorMessage: string;
+    value: string;
+    checkError: CheckErrorFunc;
+    inputCallback: InputCallback;
+  
+    constructor(props: StringSettingItemProps) {
+        super(props);
+        this.parentStore = props.store;
+        this.title = props.title;
+        this.description = props.description;
+        this.placeholder = props.placeholder;
+        this.errorMessage = props.errorMessage;
+        this.value = props.value;
+        this.checkError = props.checkError;
+        this.inputCallback = props.inputCallback;
+    }
+
+    override render () { 
+        return (
+            <Fragment>
+                <div class="form-group card-body">
+                    <div class="form-group">
+                        <div class="form-label">{ this.title }</div>
+                        <div class="setting-item-description">
+                            { this.description }
+                        </div>
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                class={`form-input input-sm ${ this.checkError(this.value) ? 'is-error' : '' }`}
+                                value={ this.value }
+                                placeholder={ this.placeholder }
+                                onkeydown={ () => { this.parentStore.setState({ dirty: true, saved: false }); } }
+                                onblur={ (event: any) => { this.inputCallback(event); } }
+                            />
+                        </div>
+                        <div
+                            class="form-input-hint-error"
+                            style={`display: ${ this.checkError(this.value) ? 'block' : 'none' }`}
+                        >
+                            { this.errorMessage }
+                        </div>
+                    </div>
+                </div>
+            </Fragment>
+        );
+    }
+}
