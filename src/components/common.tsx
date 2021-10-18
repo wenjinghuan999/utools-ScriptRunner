@@ -44,18 +44,13 @@ interface TitleProps {
     store: ReturnType<typeof Store.prototype.use>;
 }
 
-export class TitleComponent extends Component {
-    title: string;
-    parentStore: ReturnType<typeof Store.prototype.use>;
-  
+export class TitleComponent extends Component<TitleProps> {
     constructor(props: TitleProps) {
         super(props);
-        this.title = props.title;
-        this.parentStore = props.store;
     }
 
     override didMount() {
-        this.parentStore.subscribe((newState: any, prevState: any) => {
+        this.props.store.subscribe((newState: any, prevState: any) => {
             if (newState.dirty !== prevState.dirty) {
                 this.update();
             }
@@ -63,17 +58,17 @@ export class TitleComponent extends Component {
     }
   
     override didUnmount() {
-        this.parentStore.cancel();
+        this.props.store.cancel();
     }
 
     override render () { 
         return (
             <Fragment>
                 <span
-                    class={'title' + (this.parentStore.state.dirty ? ' badge badge-unready' : '')}
+                    class={'title' + (this.props.store.state.dirty ? ' badge badge-unready' : '')}
                     data-badge="已修改"
                 >
-                    { this.title }
+                    { this.props.title }
                 </span>
             </Fragment>
         );
@@ -95,28 +90,9 @@ interface StringSettingItemProps {
     inputCallback: StringInputCallback;
 }
 
-export class StringSettingItemComponent extends Component {
-    key: string;
-    parentStore: ReturnType<typeof Store.prototype.use>;
-    title: string;
-    description: string;
-    placeholder: string;
-    errorMessage: string;
-    value: string;
-    checkError: StringInputCheckErrorFunc;
-    inputCallback: StringInputCallback;
-  
+export class StringSettingItemComponent extends Component<StringSettingItemProps> {
     constructor(props: StringSettingItemProps) {
         super(props);
-        this.key = props.key;
-        this.parentStore = props.store;
-        this.title = props.title;
-        this.description = props.description;
-        this.placeholder = props.placeholder;
-        this.errorMessage = props.errorMessage;
-        this.value = props.value;
-        this.checkError = props.checkError;
-        this.inputCallback = props.inputCallback;
     }
 
     override render () { 
@@ -124,25 +100,25 @@ export class StringSettingItemComponent extends Component {
             <Fragment>
                 <div class="form-group card-body">
                     <div class="form-group">
-                        <div class="form-label">{ this.title }</div>
+                        <div class="form-label">{ this.props.title }</div>
                         <div class="setting-item-description">
-                            { this.description }
+                            { this.props.description }
                         </div>
                         <div class="input-group">
                             <input
                                 type="text"
-                                class={`form-input input-sm ${ this.checkError(this.value) ? 'is-error' : '' }`}
-                                value={ this.value }
-                                placeholder={ this.placeholder }
-                                onkeydown={ () => { this.parentStore.setState({ dirty: true, saved: false }); } }
-                                onblur={ (event: { target?: { value?: string }}) => { this.inputCallback(this.key, event.target?.value ?? ''); } }
+                                class={`form-input input-sm ${ this.props.checkError(this.props.value) ? 'is-error' : '' }`}
+                                value={ this.props.value }
+                                placeholder={ this.props.placeholder }
+                                onkeydown={ () => { this.props.store.setState({ dirty: true, saved: false }); } }
+                                onblur={ (event: { target?: { value?: string }}) => { this.props.inputCallback(this.props.key, event.target?.value ?? ''); } }
                             />
                         </div>
                         <div
                             class="form-input-hint-error"
-                            style={`display: ${ this.checkError(this.value) ? 'block' : 'none' }`}
+                            style={`display: ${ this.props.checkError(this.props.value) ? 'block' : 'none' }`}
                         >
-                            { this.errorMessage }
+                            { this.props.errorMessage }
                         </div>
                     </div>
                 </div>
@@ -155,29 +131,15 @@ type BooleanInputCallback = (id: string, value: boolean) => void;
 
 interface BooleanSettingItemProps {
     key: string;
-    store: ReturnType<typeof Store.prototype.use>;
     title: string;
     description: string;
     value: boolean;
     inputCallback: BooleanInputCallback;
 }
 
-export class BooleanSettingItemComponent extends Component {
-    key: string;
-    parentStore: ReturnType<typeof Store.prototype.use>;
-    title: string;
-    description: string;
-    value: boolean;
-    inputCallback: BooleanInputCallback;
-  
+export class BooleanSettingItemComponent extends Component<BooleanSettingItemProps> {
     constructor(props: BooleanSettingItemProps) {
         super(props);
-        this.key = props.key;
-        this.parentStore = props.store;
-        this.title = props.title;
-        this.description = props.description;
-        this.value = props.value;
-        this.inputCallback = props.inputCallback;
     }
 
     override render () { 
@@ -187,22 +149,22 @@ export class BooleanSettingItemComponent extends Component {
                     <form class="form-horizontal">
                         <div class="form-group">
                             <div class="col-10 col-mr-auto">
-                                <div class="form-label">{ this.title }</div>
-                                <div class="form-description">{ this.description }</div>
+                                <div class="form-label">{ this.props.title }</div>
+                                <div class="form-description">{ this.props.description }</div>
                             </div>
                             <div class="col-1 flex-column-center">
                                 <label class="form-switch">
                                     {
-                                        this.value
+                                        this.props.value
                                             ? <input
                                                 type="checkbox"
                                                 checked
-                                                onchange={() => this.inputCallback(this.key, false)}
+                                                onchange={() => this.props.inputCallback(this.props.key, false)}
                                             />
                                             :
                                             <input
                                                 type="checkbox"
-                                                onchange={() => this.inputCallback(this.key, true)}
+                                                onchange={() => this.props.inputCallback(this.props.key, true)}
                                             />
                                     }
                                     <i class="form-icon"/>

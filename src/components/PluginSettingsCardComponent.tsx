@@ -86,7 +86,6 @@ export class PluginSettingsCardComponent extends Component {
                     <div class = "divider" />
                     <BooleanSettingItemComponent 
                         key="createFeature"
-                        store={ this.store.use() }
                         title="创建关键字"
                         value={ this.createFeature }
                         description="为每个脚本文件创建关键字（脚本数目较多时建议禁用）。"
