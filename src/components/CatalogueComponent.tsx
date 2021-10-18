@@ -39,7 +39,7 @@ export class CatalogueComponent extends Component {
                                     <a href={'#' + FileTypeSettingItem.getId(this.localSettings.fileTypes[key].name)}>
                                         <img
                                             class="catalogue-app-icon"
-                                            src={ utools.getFileIcon('.py') ?? '' }
+                                            src={ utools.getFileIcon(this.localSettings.fileTypes[key].extname) ?? '' }
                                             alt={ this.localSettings.fileTypes[key].name }
                                         />
                                         <span class="catalogue-app-name">{this.localSettings.fileTypes[key].name}</span>
