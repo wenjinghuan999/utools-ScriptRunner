@@ -35,57 +35,61 @@ export class FileTypeCardComponent extends Component {
 
     input(event: any, id: string) {
         let inputValue = event.target?.value;
-        if (!inputValue) {
-            return;
-        } else {
-            console.log('input: ' + inputValue); 
-            switch (id) {
-                case 'name':
-                    this.name = inputValue;
-                    break;
-                case 'pattern':
-                    this.pattern = inputValue;
-                    break;
-                case 'extname':
-                    this.extname = inputValue;
-                    break;
-                case 'command':
-                    this.command = inputValue;
-                    break;
-                default:
-                    break;
+        console.log('input: ' + inputValue); 
+        if (id === 'name' || id == 'pattern') {
+            if (!inputValue) {
+                return;
             }
-            let saved = false;
-            let fileTypeListDirty = false;
-            if (this.checkValid()) {
-                let setting = Data.getLocalSettings();
-                if (this.name !== this.originalName && setting.fileTypes[this.originalName] !== undefined) {
-                    console.log('Renaming "' + this.originalName + '" to "' + this.name + '"');
-                    const originFileType = setting.fileTypes[this.originalName];
-                    setting.fileTypes[this.name] = new FileTypeSettingItem(this.name, originFileType.pattern, originFileType.extname, originFileType.command);
-                    delete setting.fileTypes[this.originalName];
-                    Data.setLocalSettings(setting);
-                    this.originalName = this.name;
+        }
+        switch (id) {
+            case 'name':
+                this.name = inputValue;
+                break;
+            case 'pattern':
+                this.pattern = inputValue;
+                break;
+            case 'extname':
+                this.extname = inputValue;
+                break;
+            case 'command':
+                this.command = inputValue;
+                break;
+            default:
+                break;
+        }
+        let saved = false;
+        let fileTypeListDirty = false;
+        if (this.checkValid()) {
+            let setting = Data.getLocalSettings();
+            if (this.name !== this.originalName && setting.fileTypes[this.originalName] !== undefined) {
+                console.log('Renaming "' + this.originalName + '" to "' + this.name + '"');
+                const originFileType = setting.fileTypes[this.originalName];
+                setting.fileTypes[this.name] = new FileTypeSettingItem(this.name, originFileType.pattern, originFileType.extname, originFileType.command);
+                delete setting.fileTypes[this.originalName];
+                Data.setLocalSettings(setting);
+                this.originalName = this.name;
+                fileTypeListDirty = true;
+            }
+
+            setting = Data.getLocalSettings();
+            if (setting.fileTypes[this.name] !== undefined) {
+                if (setting.fileTypes[this.name].extname !== this.extname) {
                     fileTypeListDirty = true;
                 }
-
-                setting = Data.getLocalSettings();
-                if (setting.fileTypes[this.name] !== undefined) {
-                    setting.fileTypes[this.name].pattern = this.pattern;
-                    setting.fileTypes[this.name].extname = this.extname;
-                    setting.fileTypes[this.name].command = this.command;
-                } else {
-                    console.log(setting.fileTypes[this.name]);
-                    setting.fileTypes[this.name] = new FileTypeSettingItem(this.name, this.pattern, this.extname, this.command);
-                }
-                Data.setLocalSettings(setting);
-                saved = true;
+                setting.fileTypes[this.name].pattern = this.pattern;
+                setting.fileTypes[this.name].extname = this.extname;
+                setting.fileTypes[this.name].command = this.command;
+            } else {
+                console.log(setting.fileTypes[this.name]);
+                setting.fileTypes[this.name] = new FileTypeSettingItem(this.name, this.pattern, this.extname, this.command);
             }
-            this.store.setState({ dirty: !saved, saved: saved });
-            this.update();
-            if (fileTypeListDirty) {
-                this.parentStore.setState({ dirtyId: FileTypeSettingItem.getId(this.name) });
-            }
+            Data.setLocalSettings(setting);
+            saved = true;
+        }
+        this.store.setState({ dirty: !saved, saved: saved });
+        this.update();
+        if (fileTypeListDirty) {
+            this.parentStore.setState({ dirtyId: FileTypeSettingItem.getId(this.name) });
         }
     }
 
@@ -106,8 +110,16 @@ export class FileTypeCardComponent extends Component {
         return true;
     }
 
+    isExtName(extname: string): boolean {
+        return !extname || extname.startsWith('.');
+    }
+
+    isCommand(command: string): boolean {
+        return true;
+    }
+
     checkValid(): boolean {
-        return this.isNameUnique(this.name) && this.isRegExp(this.pattern);
+        return this.isNameUnique(this.name) && this.isRegExp(this.pattern) && this.isExtName(this.extname) && this.isCommand(this.command);
     }
 
     override render() {
@@ -128,7 +140,7 @@ export class FileTypeCardComponent extends Component {
                         title="名称"
                         value={ this.name }
                         description="文件类型的显示名称（唯一名称），如“Python”。"
-                        placeholder="文件类型名称"
+                        placeholder="输入文件类型名称"
                         errorMessage="文件类型名称不唯一。"
                         checkError={ (value) => { return !this.isNameUnique(value); } }
                         inputCallback={ (event) => { this.input(event, 'name'); } }
@@ -142,6 +154,26 @@ export class FileTypeCardComponent extends Component {
                         errorMessage="正则表达式无效。"
                         checkError={ (value) => { return !this.isRegExp(value); } }
                         inputCallback={ (event) => { this.input(event, 'pattern'); } }
+                    />
+                    <StringSettingItemComponent 
+                        store={ this.store.use() }
+                        title="后缀名"
+                        value={ this.extname }
+                        description="文件类型后缀名，用于获取图标，如“.py”或空。"
+                        placeholder="空后缀名"
+                        errorMessage="后缀名无效。"
+                        checkError={ (value) => { return !this.isExtName(value); } }
+                        inputCallback={ (event) => { this.input(event, 'extname'); } }
+                    />
+                    <StringSettingItemComponent 
+                        store={ this.store.use() }
+                        title="命令行"
+                        value={ this.command }
+                        description="运行文件类型的命令行，如“python”或空。"
+                        placeholder="空命令行"
+                        errorMessage="命令行无效。"
+                        checkError={ (value) => { return !this.isCommand(value); } }
+                        inputCallback={ (event) => { this.input(event, 'command'); } }
                     />
                     <SavedHintComponent store={ this.store.use() } />
                 </div>
