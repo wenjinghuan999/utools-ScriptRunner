@@ -80,32 +80,35 @@ export class TitleComponent extends Component {
     }
 }
 
-type CheckErrorFunc = (value: string) => boolean;
-type InputCallback = (event: { target?: { value?: string }}) => void;
+type StringInputCheckErrorFunc = (value: string) => boolean;
+type StringInputCallback = (id: string, value: string) => void;
 
 interface StringSettingItemProps {
+    key: string;
     store: ReturnType<typeof Store.prototype.use>;
     title: string;
     description: string;
     placeholder: string;
     errorMessage: string;
     value: string;
-    checkError: CheckErrorFunc;
-    inputCallback: InputCallback;
+    checkError: StringInputCheckErrorFunc;
+    inputCallback: StringInputCallback;
 }
 
 export class StringSettingItemComponent extends Component {
+    key: string;
     parentStore: ReturnType<typeof Store.prototype.use>;
     title: string;
     description: string;
     placeholder: string;
     errorMessage: string;
     value: string;
-    checkError: CheckErrorFunc;
-    inputCallback: InputCallback;
+    checkError: StringInputCheckErrorFunc;
+    inputCallback: StringInputCallback;
   
     constructor(props: StringSettingItemProps) {
         super(props);
+        this.key = props.key;
         this.parentStore = props.store;
         this.title = props.title;
         this.description = props.description;
@@ -132,7 +135,7 @@ export class StringSettingItemComponent extends Component {
                                 value={ this.value }
                                 placeholder={ this.placeholder }
                                 onkeydown={ () => { this.parentStore.setState({ dirty: true, saved: false }); } }
-                                onblur={ (event: any) => { this.inputCallback(event); } }
+                                onblur={ (event: { target?: { value?: string }}) => { this.inputCallback(this.key, event.target?.value ?? ''); } }
                             />
                         </div>
                         <div
@@ -142,6 +145,71 @@ export class StringSettingItemComponent extends Component {
                             { this.errorMessage }
                         </div>
                     </div>
+                </div>
+            </Fragment>
+        );
+    }
+}
+
+type BooleanInputCallback = (id: string, value: boolean) => void;
+
+interface BooleanSettingItemProps {
+    key: string;
+    store: ReturnType<typeof Store.prototype.use>;
+    title: string;
+    description: string;
+    value: boolean;
+    inputCallback: BooleanInputCallback;
+}
+
+export class BooleanSettingItemComponent extends Component {
+    key: string;
+    parentStore: ReturnType<typeof Store.prototype.use>;
+    title: string;
+    description: string;
+    value: boolean;
+    inputCallback: BooleanInputCallback;
+  
+    constructor(props: BooleanSettingItemProps) {
+        super(props);
+        this.key = props.key;
+        this.parentStore = props.store;
+        this.title = props.title;
+        this.description = props.description;
+        this.value = props.value;
+        this.inputCallback = props.inputCallback;
+    }
+
+    override render () { 
+        return (
+            <Fragment>
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-10 col-mr-auto">
+                                <div class="form-label">{ this.title }</div>
+                                <div class="form-description">{ this.description }</div>
+                            </div>
+                            <div class="col-1 flex-column-center">
+                                <label class="form-switch">
+                                    {
+                                        this.value
+                                            ? <input
+                                                type="checkbox"
+                                                checked
+                                                onchange={() => this.inputCallback(this.key, false)}
+                                            />
+                                            :
+                                            <input
+                                                type="checkbox"
+                                                onchange={() => this.inputCallback(this.key, true)}
+                                            />
+                                    }
+                                    <i class="form-icon"/>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </Fragment>
         );

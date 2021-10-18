@@ -33,29 +33,28 @@ export class FileTypeCardComponent extends Component {
         this.icon = window.utools.getFileIcon(this.extname);
     }
 
-    input(event: any, id: string) {
-        let inputValue = event.target?.value;
-        console.log('input: ' + inputValue); 
-        if (id === 'name' || id == 'pattern') {
-            if (!inputValue) {
+    input(key: string, value: string) {
+        console.log('input[' + key + '] = ' + value); 
+        if (key === 'name' || key == 'pattern') {
+            if (!value) {
                 return;
             }
         }
-        switch (id) {
+        switch (key) {
             case 'name':
-                this.name = inputValue;
+                this.name = value;
                 break;
             case 'pattern':
-                this.pattern = inputValue;
+                this.pattern = value;
                 break;
             case 'extname':
-                this.extname = inputValue;
+                this.extname = value;
                 break;
             case 'command':
-                this.command = inputValue;
+                this.command = value;
                 break;
             default:
-                break;
+                return;
         }
         let saved = false;
         let fileTypeListDirty = false;
@@ -136,6 +135,7 @@ export class FileTypeCardComponent extends Component {
                         <TitleComponent title={ this.name } store={ this.store.use() } />
                     </div>
                     <StringSettingItemComponent 
+                        key="name"
                         store={ this.store.use() }
                         title="名称"
                         value={ this.name }
@@ -143,9 +143,10 @@ export class FileTypeCardComponent extends Component {
                         placeholder="输入文件类型名称"
                         errorMessage="文件类型名称不唯一。"
                         checkError={ (value) => { return !this.isNameUnique(value); } }
-                        inputCallback={ (event) => { this.input(event, 'name'); } }
+                        inputCallback={ (key: string, value: string) => this.input(key, value) }
                     />
                     <StringSettingItemComponent 
+                        key="pattern"
                         store={ this.store.use() }
                         title="正则表达式"
                         value={ this.pattern }
@@ -153,9 +154,10 @@ export class FileTypeCardComponent extends Component {
                         placeholder="输入匹配的正则表达式"
                         errorMessage="正则表达式无效。"
                         checkError={ (value) => { return !this.isRegExp(value); } }
-                        inputCallback={ (event) => { this.input(event, 'pattern'); } }
+                        inputCallback={ (key: string, value: string) => this.input(key, value) }
                     />
                     <StringSettingItemComponent 
+                        key="extname"
                         store={ this.store.use() }
                         title="后缀名"
                         value={ this.extname }
@@ -163,9 +165,10 @@ export class FileTypeCardComponent extends Component {
                         placeholder="空后缀名"
                         errorMessage="后缀名无效。"
                         checkError={ (value) => { return !this.isExtName(value); } }
-                        inputCallback={ (event) => { this.input(event, 'extname'); } }
+                        inputCallback={ (key: string, value: string) => this.input(key, value) }
                     />
                     <StringSettingItemComponent 
+                        key="command"
                         store={ this.store.use() }
                         title="命令行"
                         value={ this.command }
@@ -173,7 +176,7 @@ export class FileTypeCardComponent extends Component {
                         placeholder="空命令行"
                         errorMessage="命令行无效。"
                         checkError={ (value) => { return !this.isCommand(value); } }
-                        inputCallback={ (event) => { this.input(event, 'command'); } }
+                        inputCallback={ (key: string, value: string) => this.input(key, value) }
                     />
                     <SavedHintComponent store={ this.store.use() } />
                 </div>
