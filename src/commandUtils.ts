@@ -12,16 +12,23 @@ function runCommand(script: string) {
     console.log('Found file type:')
     console.log(fileType);
 
-    const command = fileType.command;
     const envVars = process.env;
     envVars.PATH = envVars.PATH + Data.getLocalSettings().commonSettings.env;
-
+    const cwd = path.dirname(script);
+    
+    let command = fileType.command;
     if (command) {
-        console.log('Run: ' + command + ' ' + script);
-        child_process.spawn(command, [script], {
+        if (command.indexOf('$FILE') < 0) {
+            command = command + ' $FILE';
+        }
+        command = command.replace(/\$FILE/gi, script);
+
+        console.log('Run: ' + command);
+        child_process.spawn(command, [], {
             detached: true,
             shell: true,
-            env: envVars
+            env: envVars,
+            cwd: cwd
        });
     } else {
         if (window.utools.isWindows()) {
@@ -32,7 +39,8 @@ function runCommand(script: string) {
             child_process.spawn(script, {
                 detached: true,
                 shell: true,
-                env: envVars
+                env: envVars,
+                cwd: cwd
             });
         }
     }

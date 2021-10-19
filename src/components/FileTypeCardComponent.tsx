@@ -172,7 +172,7 @@ export class FileTypeCardComponent extends Component {
                         store={ this.store.use() }
                         title="命令行"
                         value={ this.command }
-                        description="运行文件类型的命令行，如“python”或空。"
+                        description="运行文件类型的命令行，如“python”、“python $FILE --args”或空。"
                         placeholder="空命令行"
                         errorMessage="命令行无效。"
                         checkError={ (value) => { return !this.isCommand(value); } }
