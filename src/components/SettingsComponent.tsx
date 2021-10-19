@@ -4,6 +4,7 @@ import { Css as customCss } from '../styles/custom';
 import { Css as spectreCss } from '../styles/spectre';
 import { Data } from '../dataUtils';
 import { CatalogueComponent } from './CatalogueComponent';
+import { SystemInfoCardComponent } from './SystemInfoCardComponent';
 import { PluginSettingsCardComponent } from './PluginSettingsCardComponent';
 import { FileTypeCardComponent } from './FileTypeCardComponent';
 
@@ -53,7 +54,7 @@ export class SettingsComponent extends Component {
                                 <CatalogueComponent localSettings={ Data.getLocalSettings() }/>
                             </div>
                             <div class="column col-9">
-                                {/* <InformationCard platform={this.state.platform}/> */}
+                                <SystemInfoCardComponent />
                                 <PluginSettingsCardComponent />
                                 {
                                     Object.keys(Data.getLocalSettings().fileTypes)
