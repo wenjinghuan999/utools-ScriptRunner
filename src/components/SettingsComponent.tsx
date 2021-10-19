@@ -6,7 +6,6 @@ import { Data } from '../dataUtils';
 import { CatalogueComponent } from './CatalogueComponent';
 import { PluginSettingsCardComponent } from './PluginSettingsCardComponent';
 import { FileTypeCardComponent } from './FileTypeCardComponent';
-import { clearInterval } from 'timers';
 
 export class SettingsComponent extends Component {
     store = new Store({ dirtyId: '' });
