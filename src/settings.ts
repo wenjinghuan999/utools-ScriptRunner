@@ -37,14 +37,18 @@ export class LocalSettings {
     public fileTypes: Record<string, FileTypeSettingItem> = {};
 
     constructor() {
+        this.fileTypes = LocalSettings.buildDefaultFileTypes();
+    }
+
+    static buildDefaultFileTypes(): Record<string, FileTypeSettingItem> {
         if (window.utools.isWindows()) {
-            this.fileTypes = LocalSettings.buildFileTypes([
+            return LocalSettings.buildFileTypes([
                 ['Python', '\\.py$', '.py', 'python'],
                 ['Node.js', '\\.js$', '.js', 'node'],
                 ['Batch file', '\\.bat$', '.bat', ''],
             ]);
         } else {
-            this.fileTypes = LocalSettings.buildFileTypes([
+            return LocalSettings.buildFileTypes([
                 ['Python', '\\.py$', '.py', 'python'],
                 ['Node.js', '\\.js$', '.js', 'node'],
                 ['Bash', '\\.sh$', '.sh', 'bash'],

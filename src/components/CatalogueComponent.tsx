@@ -1,17 +1,40 @@
-import Nano, { Component, Fragment } from 'nano-jsx';
+import Nano, { Component, Fragment, Store } from 'nano-jsx';
+import { Data } from '../dataUtils';
 import { FileTypeSettingItem, LocalSettings } from '../settings';
 
 interface CatalogueProps {
-    localSettings: LocalSettings
+    localSettings: LocalSettings;
+    store: ReturnType<typeof Store.prototype.use>;
 }
 
-export class CatalogueComponent extends Component {
-
-    localSettings: LocalSettings;
-
+export class CatalogueComponent extends Component<CatalogueProps> {
     constructor(props: CatalogueProps) {
         super(props);
-        this.localSettings = props.localSettings;
+    }
+
+    addNewFileType() {
+        const setting = Data.getLocalSettings();
+        let name = 'New File Type';
+        let i = 0;
+        while (setting.fileTypes[name] !== undefined) {
+            i++;
+            name = `New File Type ${i}`;
+        }
+        setting.fileTypes[name] = new FileTypeSettingItem(name, '\.ext$', '.ext', '');
+
+        console.log('Add new filetype "' + name + '"');
+        Data.setLocalSettings(setting);
+        this.props.store.setState({ dirtyId: FileTypeSettingItem.getId(name) });
+    }
+
+    resetToDefault() {
+        if (confirm('将删除所有文件类型并重置设置，确定吗？')) {
+            const setting = Data.getLocalSettings();
+            console.log('Reset to default');
+            setting.fileTypes = LocalSettings.buildDefaultFileTypes();
+            Data.setLocalSettings(setting);
+            this.props.store.setState({ dirtyId: 'python' });
+        }
     }
     
     override render(): HTMLElement | void {
@@ -32,21 +55,37 @@ export class CatalogueComponent extends Component {
                     </li>
                     <div class="divider"/>
                     {
-                        Object.keys(this.localSettings.fileTypes)
+                        Object.keys(this.props.localSettings.fileTypes)
                             .sort()
                             .map(key => (
                                 <li class="nav-item">
-                                    <a href={'#' + FileTypeSettingItem.getId(this.localSettings.fileTypes[key].name)}>
+                                    <a href={'#' + FileTypeSettingItem.getId(this.props.localSettings.fileTypes[key].name)}>
                                         <img
                                             class="catalogue-app-icon"
-                                            src={ utools.getFileIcon(this.localSettings.fileTypes[key].extname) ?? '' }
-                                            alt={ this.localSettings.fileTypes[key].name }
+                                            src={ utools.getFileIcon(this.props.localSettings.fileTypes[key].extname) ?? '' }
+                                            alt={ this.props.localSettings.fileTypes[key].name }
                                         />
-                                        <span class="catalogue-app-name">{this.localSettings.fileTypes[key].name}</span>
+                                        <span class="catalogue-app-name">{this.props.localSettings.fileTypes[key].name}</span>
                                     </a>
                                 </li>
                             ))
                     }
+                    <div class="divider"/>
+                    <li class="nav-item">
+                        <button class="btn" onclick={ () => { this.addNewFileType(); } }>
+                            <i class="icon icon-plus"/>
+                            <b>添加新的文件类型</b>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button 
+                            class="btn btn-error"
+                            onclick={ () => { this.resetToDefault(); } }
+                        >
+                            <i class="icon icon-refresh"/>
+                            <b>重置所有文件类型</b>
+                        </button>
+                    </li>
                 </ul>
             </Fragment>
         );

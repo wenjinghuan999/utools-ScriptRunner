@@ -2,6 +2,7 @@ import Nano, {Component, Fragment} from 'nano-jsx';
 import { Store } from 'nano-jsx/lib/store';
 import { Css as customCss } from '../styles/custom';
 import { Css as spectreCss } from '../styles/spectre';
+import { Css as spectreIconsCss } from '../styles/spectre-icons';
 import { Data } from '../dataUtils';
 import { CatalogueComponent } from './CatalogueComponent';
 import { SystemInfoCardComponent } from './SystemInfoCardComponent';
@@ -43,6 +44,7 @@ export class SettingsComponent extends Component {
                         content="width=device-width, initial-scale=1"
                     />
                     <style>{ spectreCss }</style>
+                    <style>{ spectreIconsCss }</style>
                     <style>{ customCss }</style>
                     <script src="index.js"/>
                 </head>
@@ -51,7 +53,7 @@ export class SettingsComponent extends Component {
                     <div id="setting" class={utools.isDarkColors() ? 'container dark' : 'container'}>
                         <div class="columns">
                             <div class="column col-3">
-                                <CatalogueComponent localSettings={ Data.getLocalSettings() }/>
+                                <CatalogueComponent localSettings={ Data.getLocalSettings() } store={ this.store.use() }/>
                             </div>
                             <div class="column col-9">
                                 <SystemInfoCardComponent />

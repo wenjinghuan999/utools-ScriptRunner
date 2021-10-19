@@ -9,7 +9,7 @@ interface FileTypeCardProps {
     store: ReturnType<typeof Store.prototype.use>;
 }
 
-export class FileTypeCardComponent extends Component {
+export class FileTypeCardComponent extends Component<FileTypeCardProps> {
     icon: string;
     originalName: string;
     name: string;
@@ -18,11 +18,9 @@ export class FileTypeCardComponent extends Component {
     command: string;
 
     store = new Store({ dirty: false, saved: false });
-    parentStore: ReturnType<typeof Store.prototype.use>;
 
     constructor(props: FileTypeCardProps) {
         super(props);
-        this.parentStore = props.store;
 
         const fileType = Data.getLocalSettings().fileTypes[props.fileType];
         this.originalName = fileType.name;
@@ -88,7 +86,7 @@ export class FileTypeCardComponent extends Component {
         this.store.setState({ dirty: !saved, saved: saved });
         this.update();
         if (fileTypeListDirty) {
-            this.parentStore.setState({ dirtyId: FileTypeSettingItem.getId(this.name) });
+            this.props.store.setState({ dirtyId: FileTypeSettingItem.getId(this.name) });
         }
     }
 
@@ -119,6 +117,19 @@ export class FileTypeCardComponent extends Component {
 
     checkValid(): boolean {
         return this.isNameUnique(this.name) && this.isRegExp(this.pattern) && this.isExtName(this.extname) && this.isCommand(this.command);
+    }
+
+    removeFileType() {
+        if (confirm('确定删除文件类型："' + this.originalName + '"吗？')) {
+            const setting = Data.getLocalSettings();
+            if (setting.fileTypes[this.originalName] !== undefined) {
+                console.log('Removing "' + this.originalName + '"');
+                delete setting.fileTypes[this.originalName];
+                Data.setLocalSettings(setting);
+                this.originalName = this.name;
+                this.props.store.setState({ dirtyId: FileTypeSettingItem.getId(this.name) });
+            }
+        }
     }
 
     override render() {
@@ -179,6 +190,13 @@ export class FileTypeCardComponent extends Component {
                         inputCallback={ (key: string, value: string) => this.input(key, value) }
                     />
                     <SavedHintComponent store={ this.store.use() } />
+                    <div class="divider"/>
+                    <div class="form-group card-body">
+                        <button class="btn btn-error" onclick={ () => { this.removeFileType(); } }>
+                            <i class="icon icon-cross"/>
+                            <b>删除文件类型</b>
+                        </button>
+                    </div>
                 </div>
             </Fragment>
         )
