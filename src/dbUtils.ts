@@ -84,6 +84,6 @@ export class DBGlobalSettings extends DBDocBase<GlobalSettings> {
     }
 
     public recover(inData: any): GlobalSettings {
-        return Object.assign(inData, this.data);
+        return Object.assign(this.data, inData);
     }
 }
