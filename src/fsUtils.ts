@@ -174,20 +174,21 @@ async function searchScripts(url: string): Promise<string[]> {
                     }
                 }
             }
-        })
-
-        const subDirResults = await Promise.all(subDirs.map(async subDir => {
-            try {
-                return process(subDir, await fs.promises.readdir(subDir));
-            } catch (err) {
-                return [];
-            }
-        }));
+        });
 
         let result = scripts;
-        subDirResults.forEach(subDirResult => {
-            result = result.concat(subDirResult);
-        })
+        if (Data.getGlobalSettings().searchSubFolders) {
+            const subDirResults = await Promise.all(subDirs.map(async subDir => {
+                try {
+                    return process(subDir, await fs.promises.readdir(subDir));
+                } catch (err) {
+                    return [];
+                }
+            }));
+            subDirResults.forEach(subDirResult => {
+                result = result.concat(subDirResult);
+            });
+        }
         return result;
     };
 

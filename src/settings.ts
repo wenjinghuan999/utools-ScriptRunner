@@ -12,6 +12,7 @@ export class CommonSettings {
 
 export class GlobalSettings {
     public createFeature: boolean = true;
+    public searchSubFolders: boolean = true;
 }
 
 export class FileTypeSettingItem {

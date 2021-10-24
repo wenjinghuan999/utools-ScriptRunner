@@ -8,6 +8,7 @@ export class PluginSettingsCardComponent extends Component {
     store = new Store({ dirty: false, saved: false });
 
     createFeature: boolean;
+    searchSubFolder: boolean;
     env: string;
 
     constructor(props: any) {
@@ -15,6 +16,7 @@ export class PluginSettingsCardComponent extends Component {
 
         const globalSetting = Data.getGlobalSettings();
         this.createFeature = globalSetting.createFeature;
+        this.searchSubFolder = globalSetting.searchSubFolders;
         const localSetting = Data.getLocalSettings();
         this.env = localSetting.commonSettings.env;
     }
@@ -46,6 +48,9 @@ export class PluginSettingsCardComponent extends Component {
             case 'createFeature':
                 this.createFeature = value;
                 break;
+            case 'searchSubFolder':
+                this.searchSubFolder = value;
+                break;
             default:
                 return;
         }
@@ -55,6 +60,7 @@ export class PluginSettingsCardComponent extends Component {
         if (this.checkValid()) {
             const setting = Data.getGlobalSettings();
             setting.createFeature = this.createFeature;
+            setting.searchSubFolders = this.searchSubFolder;
             console.log(setting);
             Data.setGlobalSettings(setting);
             saved = true;
@@ -89,6 +95,13 @@ export class PluginSettingsCardComponent extends Component {
                         title="创建关键字"
                         value={ this.createFeature }
                         description="为每个脚本文件创建关键字（脚本数目较多时建议禁用）。"
+                        inputCallback={ (key: string, value: boolean) => this.switch(key, value) }
+                    />
+                    <BooleanSettingItemComponent 
+                        key="searchSubFolder"
+                        title="扫描子文件夹"
+                        value={ this.searchSubFolder }
+                        description="扫描时是否递归地扫描指定文件夹下的子文件夹。"
                         inputCallback={ (key: string, value: boolean) => this.switch(key, value) }
                     />
                     <StringSettingItemComponent
