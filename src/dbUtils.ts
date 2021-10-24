@@ -12,7 +12,13 @@ abstract class DBDocBase<T> {
         const data = window.utools.dbStorage.getItem(local_id);
         if (data !== undefined && data !== null) {
             if (!this.checkValid(data)) {
+                console.log('DB load checkValid failed! Loaded:');
+                console.log(data);
+                console.log('Current:');
+                console.log(this.data);
                 this.data = this.recover(data);
+                console.log('Recovered:');
+                console.log(this.data);
             } else {
                 this.data = data;
             }
@@ -60,7 +66,7 @@ export class DBLocalSettings extends DBDocBase<LocalSettings> {
     public data = new LocalSettings();
 
     public checkValid(inData: any): boolean {
-        return inData instanceof LocalSettings;
+        return LocalSettings.isLocalSettings(inData);
     }
 
     public recover(inData: any): LocalSettings {
@@ -74,10 +80,10 @@ export class DBGlobalSettings extends DBDocBase<GlobalSettings> {
     public data = new GlobalSettings();
 
     public checkValid(inData: any): boolean {
-        return inData instanceof GlobalSettings;
+        return GlobalSettings.isGlobalSettings(inData);
     }
 
     public recover(inData: any): GlobalSettings {
-        return Object.assign(this.data, inData);
+        return Object.assign(inData, this.data);
     }
 }

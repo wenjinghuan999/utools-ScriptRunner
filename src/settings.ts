@@ -8,11 +8,19 @@ export class CommonSettings {
             this.env = ':/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
         }
     }
+
+    public static isCommonSettings(inData: any): inData is CommonSettings {
+        return typeof(inData.env) === 'string';
+    }
 }
 
 export class GlobalSettings {
     public createFeature: boolean = true;
     public searchSubFolders: boolean = true;
+
+    public static isGlobalSettings(inData: any): inData is GlobalSettings {
+        return inData.createFeature !== undefined && inData.searchSubFolders !== undefined;
+    }
 }
 
 export class FileTypeSettingItem {
@@ -63,5 +71,9 @@ export class LocalSettings {
             fileTypes[item[0]] = new FileTypeSettingItem(item[0], item[1], item[2], item[3]);
         });
         return fileTypes;
+    }
+
+    public static isLocalSettings(inData: any): inData is LocalSettings {
+        return CommonSettings.isCommonSettings(inData.commonSettings) && inData.fileTypes !== undefined;
     }
 }
