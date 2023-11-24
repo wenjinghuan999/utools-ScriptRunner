@@ -32,12 +32,12 @@ function runCommand(script: string) {
             cwd: cwd
         });
 
-        proc.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
-        });
-        proc.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
-        });
+        // proc.stdout.on('data', (data) => {
+        //     console.log(`stdout: ${data}`);
+        // });
+        // proc.stderr.on('data', (data) => {
+        //     console.error(`stderr: ${data}`);
+        // });
         proc.on('close', (code) => {
             console.log(`child process exited with code ${code}`);
         });
@@ -54,12 +54,12 @@ function runCommand(script: string) {
                 cwd: cwd
             });
 
-            proc.stdout.on('data', (data) => {
-                console.log(`stdout: ${data}`);
-            });
-            proc.stderr.on('data', (data) => {
-                console.error(`stderr: ${data}`);
-            });
+            // proc.stdout.on('data', (data) => {
+            //     console.log(`stdout: ${data}`);
+            // });
+            // proc.stderr.on('data', (data) => {
+            //     console.error(`stderr: ${data}`);
+            // });
             proc.on('close', (code) => {
                 console.log(`child process exited with code ${code}`);
             });
