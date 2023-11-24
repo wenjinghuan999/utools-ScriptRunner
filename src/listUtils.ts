@@ -105,6 +105,6 @@ export class PushScriptListItem {
         
         this.text = path.basename(item.url) + "（位于监视目录：" + item.dir + "）";
         this.title = item.url;
-        this.icon = window.utools.getFileIcon(item.url);
+        this.icon = 'python.png';
     }
 };
