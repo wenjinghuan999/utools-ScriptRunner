@@ -1,9 +1,10 @@
 import { convertToRealpath, convertFromRealpath, searchPathOnDisk } from './fsUtils';
 import { Data } from './dataUtils';
-import { ClearAllDirsListItem, DBDirListItem, DiskDirListItem, RefreshScriptsListItem, DBScriptListItem } from './listUtils';
+import { ClearAllDirsListItem, DBDirListItem, DiskDirListItem, RefreshScriptsListItem, DBScriptListItem, PushScriptListItem } from './listUtils';
 import { searchAndAddScriptsAndFeatures, searchAndAddAllScriptsAndFeatures, removeAllScriptsAndFeatures, removeScriptsAndFeatures } from './featureUtils';
 import { searchAllScriptCommands } from './searchUtils';
 import { runCommand } from './commandUtils';
+import { sleep } from './commonUtils';
 import { SettingsComponent } from './components/SettingsComponent';
 
 const windowExports = {
@@ -119,11 +120,22 @@ const windowExports = {
     'run-script': {
         mode: 'list',
         args: {
-            enter: (action: any, callbackSetList: Function) => {
+            enter: ({ code, type, payload } : { code: string, type: string, payload: string }, callbackSetList: Function) => {
                 document.getElementById('setting')?.remove();
-                callbackSetList(searchAllScriptCommands([]).map(item => new DBScriptListItem(item)));
+                console.log('enter', code, type, payload);
+                if (type === 'over') {
+                    const searchWords = payload.toLocaleLowerCase().split(' ').filter(x => !!x);
+                    callbackSetList(searchAllScriptCommands(searchWords).map(item => new DBScriptListItem(item)));
+                    // hack: use async function to do setSubInputValue later
+                    sleep(300).then(() => {
+                        window.utools.setSubInputValue(payload);
+                    });
+                } else {
+                    callbackSetList(searchAllScriptCommands([]).map(item => new DBScriptListItem(item)));
+                }
             },
             search: (action: any, searchWord: string, callbackSetList: Function) => {
+                console.log('search', action, searchWord);
                 const searchWords = searchWord.toLocaleLowerCase().split(' ').filter(x => !!x);
                 callbackSetList(searchAllScriptCommands(searchWords).map(item => new DBScriptListItem(item)));
             },
@@ -139,3 +151,35 @@ const windowExports = {
 }
 
 export { windowExports }
+
+function onMainPushCallback({ code, type, payload } : { code: string, type: string, payload: string }) {
+    if (code !== 'run-script' || type !== 'over') {
+        return;
+    }
+    const searchWords = payload.toLocaleLowerCase().split(' ').filter(x => !!x);
+    let result = searchAllScriptCommands(searchWords).map(item => new PushScriptListItem(item));
+    const total = result.length;
+    if (total > 6) {
+        result = result.slice(0, 5);
+        result.push({
+            text: "共搜索到 " + total + " 个脚本，查看更多...",
+            icon: '',
+            title: "进入应用查看更多",
+            searchItem: { url: '', dir: '', idx1: [], subArr1: [], idx2: [], subArr2: [] }
+        });
+    }
+    return result;
+}
+
+function onMainPushSelectCallback({ code, type, payload, option } : { code: string, type: string, payload: string, option: PushScriptListItem }) {
+    const script = option.searchItem.url;
+    if (script === '' || script === undefined) {
+        return true;
+    }
+    utools.hideMainWindow();
+    runCommand(script);
+    return false;
+}
+
+// @ts-ignore
+window.utools.onMainPush(onMainPushCallback, onMainPushSelectCallback)

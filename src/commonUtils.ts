@@ -8,6 +8,13 @@ function getBasename(url: string): string {
     return url;
 }
 
+async function sleep(milliseconds: number): Promise<void> {
+    await new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
+}
+
 export {
-    getBasename
+    getBasename,
+    sleep
 }

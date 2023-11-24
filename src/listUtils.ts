@@ -93,3 +93,18 @@ export class DBScriptListItem implements UToolsListItem {
         this.icon = window.utools.getFileIcon(item.url);
     }
 };
+
+export class PushScriptListItem {
+    public text: string;
+    public icon: string;
+    public title: string;
+    public searchItem: SearchDBScriptItem;
+
+    constructor(item: SearchDBScriptItem) {
+        this.searchItem = item;
+        
+        this.text = path.basename(item.url) + "（位于监视目录：" + item.dir + "）";
+        this.title = item.url;
+        this.icon = window.utools.getFileIcon(item.url);
+    }
+};

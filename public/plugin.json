@@ -1,7 +1,7 @@
 {
 	"pluginName": "脚本运行",
 	"description": "可将监视目录下的所有python脚本文件自动加入关键字列表",
-	"version": "1.0.1",
+	"version": "1.0.2",
     "preload": "preload.js",
     "logo": "python.png",
     "author": "wenjinghuan999",
@@ -36,7 +36,13 @@
 		{
             "code": "run-script",
             "explain": "运行脚本，模糊匹配监视目录内的脚本文件",
-            "cmds":["运行脚本", "Run"]
+            "cmds":["运行脚本", "Run",
+            {
+                "type": "over",
+                "label": "运行脚本",
+                "minLength": 1
+            }],
+            "mainPush": true
         }
 	]
 }
