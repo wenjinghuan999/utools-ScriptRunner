@@ -1,7 +1,7 @@
 {
 	"pluginName": "脚本运行",
 	"description": "可将监视目录下的所有python脚本文件自动加入关键字列表",
-	"version": "1.0.0",
+	"version": "1.0.1",
     "preload": "preload.js",
     "logo": "python.png",
     "author": "wenjinghuan999",
