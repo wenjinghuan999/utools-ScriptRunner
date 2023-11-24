@@ -15,6 +15,7 @@ function runCommand(script: string) {
     const envVars = process.env;
     envVars.PATH = envVars.PATH + Data.getLocalSettings().commonSettings.env;
     const cwd = path.dirname(script);
+    console.log('PATH = ' + envVars.PATH);
     
     let command = fileType.command;
     if (command) {
@@ -24,23 +25,43 @@ function runCommand(script: string) {
         command = command.replace(/\$FILE/gi, script);
 
         console.log('Run: ' + command);
-        child_process.spawn(command, [], {
+        const proc = child_process.spawn(command, [], {
             detached: true,
             shell: true,
             env: envVars,
             cwd: cwd
-       });
+        });
+
+        proc.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+        proc.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+        proc.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
     } else {
         if (window.utools.isWindows()) {
             console.log('Open: ' + script);
             electron.shell.openExternal(script);
         } else {
             console.log('Run: ' + script);
-            child_process.spawn(script, {
+            const proc = child_process.spawn(script, {
                 detached: true,
                 shell: true,
                 env: envVars,
                 cwd: cwd
+            });
+
+            proc.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+            });
+            proc.stderr.on('data', (data) => {
+                console.error(`stderr: ${data}`);
+            });
+            proc.on('close', (code) => {
+                console.log(`child process exited with code ${code}`);
             });
         }
     }
