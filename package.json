@@ -11,7 +11,7 @@
     "style-loader": "^3.2.1",
     "ts-loader": "^9.2.5",
     "typescript": "^4.4.4",
-    "utools-api-types": "^2.0.6"
+    "utools-api-types": "^2.6.4"
   },
   "name": "utools-scriptrunner",
   "description": "utools-ScriptRunner",

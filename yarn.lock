@@ -970,10 +970,10 @@ util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
-utools-api-types@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/utools-api-types/-/utools-api-types-2.0.6.tgz#5ab3384ddf1de1c2ad9367ee1268df08b81c6595"
-  integrity sha512-XahJpUEdlraIBJ9VEt26w4JqUQqcXjk+uZvUfyn5MCZj3i2eypMTdC8aRif8obhEPTqgXK5E6ZqJhUl28l+Wfg==
+utools-api-types@^2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/utools-api-types/-/utools-api-types-2.6.4.tgz#56c08e94e4af85f179a2eb95f9cb42f029e6c33f"
+  integrity sha512-pJuGvjSScwePuc6F/PVtL6DSCm+XzF78CBKxFUU82FON4vB8MGDXPCp6Y/25T/ndKyiyFj1zCR8ObyxtdikzPg==
 
 wrappy@1:
   version "1.0.2"
